@@ -98,7 +98,6 @@ void multiplay_link( void(*rtSym)(const char*,void*) ){
 	rtSym( "%NetMsgFrom",bbNetMsgFrom );
 	rtSym( "%NetMsgTo",bbNetMsgTo );
 	rtSym( "$NetMsgData",bbNetMsgData );
-	
 }
 
 bool multiplay_create(){

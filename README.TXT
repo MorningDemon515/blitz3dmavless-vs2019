@@ -1,21 +1,18 @@
+Blitz3DMAVless open source release! (VS2019 version)
 
-Blitz3DMAVless open source release.
+Attention! This engine cannot use BlitzMovie and fmod libs!
 
-To build Blitz3DMAVless you will need:
-
-* Visual Studio Community 2019. Install "Desktop development with C++" plus "MFC and ATL support" plus "ASP.NET and web development".
+You can grab the prebuilt free version of blitz3d from www.blitzbasic.com.
 
 Steps to build:
 
-1) Open blitz3d.sln in virtual studio 2019.
+1) Open blitz3d in Visual Studio 2019.
 
-2) Select release config and rebuild the entire solution.
+2) Build project 'bblaunch' using config 'Win32 Blitz3D Release'.
 
-3) All done! You can find output files in the _release and _release/bin dirs. Feel free to delete .pdb and .ilk files here.
+3) Output files should end up in _release subdir.
 
-4) Note: This version of blitzplus uses the dynamic version of the fmod audio lib. When redistributing programs built with blitzplus_msvc2017, you will need to also include the fmod.dll file found in the _runtime/bin directory with your programs. This should be placed in the same directory as your program's executable.
-
-5) You can also try building the debug version, although this hasn't been well tested.
+4) Done?
 
 Blitz3d is released under the zlib/libpng license.
 
