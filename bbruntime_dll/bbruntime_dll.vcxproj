@@ -98,8 +98,8 @@
     <OutDir>../_release/bin/</OutDir>
     <IntDir>.\bbruntime_dll___Win32_Blitz3DRelease\</IntDir>
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>..\DX7_Sdk\include;$(IncludePath)</IncludePath>
-    <LibraryPath>..\DX7_Sdk\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>..\DX7_Sdk\DXF\include;$(IncludePath)</IncludePath>
+    <LibraryPath>..\DX7_Sdk\DXF\lib;$(LibraryPath)</LibraryPath>
     <TargetName>runtime</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -241,7 +241,7 @@
       <ProgramDataBaseFileName>.\bbruntime_dll___Win32_Blitz3DRelease\</ProgramDataBaseFileName>
       <CallingConvention>StdCall</CallingConvention>
       <ExceptionHandling>Async</ExceptionHandling>
-      <AdditionalIncludeDirectories>../../dxsdk/include/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../dxsdk/include/</AdditionalIncludeDirectories>
     </ClCompile>
     <Midl>
       <SuppressStartupBanner>true</SuppressStartupBanner>
@@ -266,7 +266,6 @@
       <ImportLibrary>.\bbruntime_dll___Win32_Blitz3DRelease\runtime.lib</ImportLibrary>
       <AdditionalDependencies>wsock32.lib;amstrmid.lib;winmm.lib;../dxsdk/lib/d3dim.lib;../dxsdk/lib/d3drm.lib;../dxsdk/lib/d3dx.lib;../dxsdk/lib/d3dxd.lib;../dxsdk/lib/d3dxof.lib;../dxsdk/lib/ddraw.lib;../dxsdk/lib/dinput.lib;../dxsdk/lib/dplayx.lib;../dxsdk/lib/dsetup.lib;../dxsdk/lib/dsound.lib;../dxsdk/lib/dxguid.lib;odbc32.lib;odbccp32.lib;legacy_stdio_definitions.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
-      <GenerateDebugInformation>false</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -283,8 +282,8 @@
     <Image Include="bbexe.ico" />
   </ItemGroup>
   <ItemGroup>
-    <Library Include="..\..\fmodapi375win\api\lib\fmodvc.lib" />
-    <Library Include="..\..\FreeImage241\Source\FreeImageLib\Release\FreeImage.lib" />
+    <Library Include="..\fmodapi375win\api\lib\fmodvc.lib" />
+    <Library Include="..\FreeImage241\Source\FreeImageLib\Release\FreeImage.lib" />
     <Library Include="..\bbruntime\bbruntime___Win32_Blitz3DRelease\bbruntime.lib" />
     <Library Include="..\blitz3d\blitz3d___Win32_Blitz3DRelease\blitz3d.lib" />
     <Library Include="..\gxruntime\gxruntime___Win32_Blitz3DRelease\gxruntime.lib" />

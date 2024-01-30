@@ -192,7 +192,7 @@
       <ObjectFileName>.\debugger___Win32_Blitz3DRelease\</ObjectFileName>
       <ProgramDataBaseFileName>.\debugger___Win32_Blitz3DRelease\</ProgramDataBaseFileName>
       <CallingConvention>StdCall</CallingConvention>
-      <AdditionalIncludeDirectories>../../dxsdk/include/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../dxsdk/include/</AdditionalIncludeDirectories>
     </ClCompile>
     <Midl>
       <SuppressStartupBanner>true</SuppressStartupBanner>
@@ -216,7 +216,6 @@
       <OutputFile>../_release/bin/debugger.dll</OutputFile>
       <ImportLibrary>.\debugger___Win32_Blitz3DRelease\debugger.lib</ImportLibrary>
       <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
-      <GenerateDebugInformation>false</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">

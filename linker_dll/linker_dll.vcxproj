@@ -83,7 +83,7 @@
     <OutDir>../_release/bin/</OutDir>
     <IntDir>.\linker_dll___Win32_Blitz3DRelease\</IntDir>
     <LinkIncremental>false</LinkIncremental>
-    <LibraryPath>..\..\DX7_Sdk\DXF\lib;$(LibraryPath)</LibraryPath>
+    <LibraryPath>..\DX7_Sdk\DXF\lib;$(LibraryPath)</LibraryPath>
     <TargetName>linker</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Blitz2DRelease|Win32'">
@@ -116,7 +116,7 @@
       <ObjectFileName>.\linker_dll___Win32_Blitz3DRelease\</ObjectFileName>
       <ProgramDataBaseFileName>.\linker_dll___Win32_Blitz3DRelease\</ProgramDataBaseFileName>
       <CallingConvention>StdCall</CallingConvention>
-      <AdditionalIncludeDirectories>../../dxsdk/include/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../dxsdk/include/</AdditionalIncludeDirectories>
     </ClCompile>
     <Midl>
       <SuppressStartupBanner>true</SuppressStartupBanner>
@@ -141,7 +141,6 @@
       <ImportLibrary>.\linker_dll___Win32_Blitz3DRelease\linker.lib</ImportLibrary>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
       <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
-      <GenerateDebugInformation>false</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Blitz2DRelease|Win32'">

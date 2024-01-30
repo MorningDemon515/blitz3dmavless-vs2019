@@ -145,7 +145,7 @@
       <ObjectFileName>.\compiler___Win32_Blitz3DRelease\</ObjectFileName>
       <ProgramDataBaseFileName>.\compiler___Win32_Blitz3DRelease\</ProgramDataBaseFileName>
       <CallingConvention>StdCall</CallingConvention>
-      <AdditionalIncludeDirectories>../../dxsdk/include/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../dxsdk/include/</AdditionalIncludeDirectories>
     </ClCompile>
     <ResourceCompile>
       <Culture>0x0409</Culture>

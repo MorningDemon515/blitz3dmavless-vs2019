@@ -93,7 +93,7 @@
     <OutDir>.\blitz3d___Win32_Blitz3DRelease\</OutDir>
     <IntDir>.\blitz3d___Win32_Blitz3DRelease\</IntDir>
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>..\DX7_Sdk\include;$(IncludePath)</IncludePath>
+    <IncludePath>..\DX7_Sdk\DXF\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <OutDir>.\Debug\</OutDir>

@@ -88,8 +88,8 @@
     <OutDir>.\gxruntime___Win32_Blitz3DRelease\</OutDir>
     <IntDir>.\gxruntime___Win32_Blitz3DRelease\</IntDir>
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>..\DX7_Sdk\include;$(IncludePath)</IncludePath>
-    <LibraryPath>..\DX7_Sdk\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>..\DX7_Sdk\DXF\include;$(IncludePath)</IncludePath>
+    <LibraryPath>..\DX7_Sdk\DXF\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <OutDir>.\Release\</OutDir>

@@ -183,7 +183,7 @@
       <ObjectFileName>.\blitz___Win32_Blitz3DRelease\</ObjectFileName>
       <ProgramDataBaseFileName>.\blitz___Win32_Blitz3DRelease\</ProgramDataBaseFileName>
       <CallingConvention>StdCall</CallingConvention>
-      <AdditionalIncludeDirectories>../../dxsdk/include/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../dxsdk/include/</AdditionalIncludeDirectories>
     </ClCompile>
     <Midl>
       <TypeLibraryName>.\blitz___Win32_Blitz3DRelease\blitz.tlb</TypeLibraryName>
@@ -202,7 +202,6 @@
       <OutputFile>../_release/bin/blitzcc.exe</OutputFile>
       <AdditionalDependencies>odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
-      <GenerateDebugInformation>false</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
