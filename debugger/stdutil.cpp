@@ -10,11 +10,12 @@ double atof( const string &s ){
 }
 
 string itoa( int n ){
-	char buff[32];_itoa_s( n,buff,32,10 );
+	char buff[32];itoa( n,buff,10 );
 	return string( buff );
 }
 
-static int b_finite( double n ){		// definition: exponent anything but 2047.
+/*
+static int _finite( double n ){		// definition: exponent anything but 2047.
 
 	int e;					// 11 bit exponent
 	const int eMax = 2047;	// 0x7ff, all bits = 1	
@@ -27,7 +28,7 @@ static int b_finite( double n ){		// definition: exponent anything but 2047.
 	return e != eMax;
 }
 
-static int b_isnan( double n ){		// definition: exponent 2047, nonzero fraction.
+static int _isnan( double n ){		// definition: exponent 2047, nonzero fraction.
 
 	int e;					// 11 bit exponent
 	const int eMax = 2047;	// 0x7ff, all bits = 1	
@@ -46,6 +47,7 @@ static int b_isnan( double n ){		// definition: exponent 2047, nonzero fraction.
 
 	return  ( fHi | fLo ) != 0;	// returns 0,1 not just 0,nonzero
 }
+*/
 
 /////////////
 //By FLOYD!//
@@ -60,23 +62,16 @@ string ftoa( float n ){
 	string t;
 	int dec, sign;
 
-	if ( b_finite( n ) ){
+	if ( _finite( n ) ){
 
 //		if ( digits < 1 ) digits = 1;	// less than one digit is nonsense
 //		if ( digits > 8 ) digits = 8;	// practical maximum for float
 		
-		//t = _ecvt( n, digits, &dec, &sign );
-
-		char tmp[1024];
-		memset(tmp, 0, 1024);
-		errno_t err = _ecvt_s(tmp, 1024, n, digits, &dec, &sign);
-		t = tmp;
+		t = _ecvt( n, digits, &dec, &sign );
 
 		if ( dec <= eNeg + 1 || dec > ePos ){
 
-			//_gcvt( n, digits, buffer );
-			_gcvt_s(buffer, 50, n, digits);
-
+			_gcvt( n, digits, buffer );
 			t = buffer;
 			return t;
 		}
@@ -112,12 +107,11 @@ string ftoa( float n ){
 
 	}	// end of finite case
 
-	if ( b_isnan( n ) )	return "NaN";
+	if ( _isnan( n ) )	return "NaN";
 	if ( n > 0.0 )		return "Infinity";
 	if ( n < 0.0 )		return "-Infinity";
 
 	abort();
-	return 0;
 }
 
 /*
@@ -159,13 +153,13 @@ string ftoa( float n ){
 
 string tolower( const string &s ){
 	string t=s;
-	for( int k=0;k<(int)t.size();++k ) t[k]=tolower(t[k]);
+	for( int k=0;k<t.size();++k ) t[k]=tolower(t[k]);
 	return t;
 }
 
 string toupper( const string &s ){
 	string t=s;
-	for( int k=0;k<(int)t.size();++k ) t[k]=toupper(t[k]);
+	for( int k=0;k<t.size();++k ) t[k]=toupper(t[k]);
 	return t;
 }
 

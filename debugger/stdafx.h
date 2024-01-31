@@ -4,6 +4,8 @@
 
 #pragma warning(disable:4786)
 
+#define _WIN32_WINNT 0x601
+
 #include <afxwin.h>         // Core
 #include <afxcmn.h>			// Common Controls
 #include <afxrich.h>		// CRich edit

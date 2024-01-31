@@ -41,13 +41,7 @@ void SourceFile::highLight( int row,int col ){
 	while( end<len ){
 		char temp[8];
 		SetSel( end,end+1 );
-		//GetSelText( temp );
-
-		CString str = GetSelText();
-		strcpy_s(temp, 8, str.GetString());
-		
-
-
+		GetSelText( temp );
 		if( temp[0]=='\"' ) quote=!quote;
 		if( !quote && (temp[0]==':' || !isprint( temp[0] )) ) break;
 		++end;

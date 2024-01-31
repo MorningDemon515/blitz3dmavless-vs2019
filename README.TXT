@@ -1,6 +1,6 @@
 Blitz3DMAVless open source release! (VS2019 version)
 
-Attention! This engine cannot use BlitzMovie and fmod libs!
+Attention! This engine cannot use fmod libs!
 
 You can grab the prebuilt free version of blitz3d from www.blitzbasic.com.
 
@@ -8,7 +8,7 @@ Steps to build:
 
 1) Open blitz3d in Visual Studio 2019.
 
-2) Build project 'bblaunch' using config 'Win32 Blitz3D Release'.
+2) Build project using config 'Release'.
 
 3) Output files should end up in _release subdir.
 

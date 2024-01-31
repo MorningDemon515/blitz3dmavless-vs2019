@@ -4,20 +4,20 @@
 #include "mainframe.h"
 #include "libs.h"
 
-IMPLEMENT_DYNAMIC( BHtmlHelp,CHtmlView )
-BEGIN_MESSAGE_MAP( BHtmlHelp,CHtmlView )
+IMPLEMENT_DYNAMIC( HtmlHelp,CHtmlView )
+BEGIN_MESSAGE_MAP( HtmlHelp,CHtmlView )
 	ON_WM_ERASEBKGND()
 END_MESSAGE_MAP()
 
-string BHtmlHelp::getTitle(){
+string HtmlHelp::getTitle(){
 	return title;
 }
 
-void BHtmlHelp::OnTitleChange( LPCTSTR t ){
+void HtmlHelp::OnTitleChange( LPCTSTR t ){
 	listener->helpTitleChange( this,title=t );
 }
 
-void BHtmlHelp::OnBeforeNavigate2( LPCTSTR url,DWORD flags,LPCTSTR target,CByteArray& posted,LPCTSTR headers,BOOL* cancel ){
+void HtmlHelp::OnBeforeNavigate2( LPCTSTR url,DWORD flags,LPCTSTR target,CByteArray& posted,LPCTSTR headers,BOOL* cancel ){
 	string t( url );
 	int attr=GetFileAttributes( url );if( attr==-1 ) attr=0;
 	if( (attr & FILE_ATTRIBUTE_DIRECTORY) ||
@@ -32,7 +32,7 @@ void BHtmlHelp::OnBeforeNavigate2( LPCTSTR url,DWORD flags,LPCTSTR target,CByteA
 	*cancel=false;
 }
 
-BOOL BHtmlHelp::OnEraseBkgnd( CDC *dc ){
+BOOL HtmlHelp::OnEraseBkgnd( CDC *dc ){
 	return true;
 }
 

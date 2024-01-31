@@ -2,7 +2,7 @@
 #ifndef STD_H
 #define STD_H
 
-#include "../fmod/include/fmod.h"
+#include "..//fmod375/include/fmod.h"
 
 #include "../config/config.h"
 #include "../stdutil/stdutil.h"
@@ -10,7 +10,7 @@
 #pragma warning( disable:4786 )
 
 #define DIRECTSOUND_VERSION 0x700
-#define DIRECTINPUT_VERSION 0x700
+//#define DIRECTINPUT_VERSION 0x700
 
 #include <set>
 #include <map>
@@ -22,9 +22,9 @@
 
 #include <math.h>
 #include <windows.h>
-#include <dx7/ddraw.h>
-#include <dx7/dinput.h>
-#include <dx7/d3d.h>
+#include <ddraw.h>
+//#include <dinput.h>
+#include <d3d.h>
 
 using namespace std;
 

@@ -26,6 +26,6 @@ public:
 	virtual int eof()=0;
 };
 
-bool debugStream( bbStream *s,const char* a );
+void debugStream( bbStream *s );
 
 #endif

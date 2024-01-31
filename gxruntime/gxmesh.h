@@ -2,7 +2,7 @@
 #ifndef GXMESH_H
 #define GXMESH_H
 
-#include <dx7/d3d.h>
+#include <d3d.h>
 
 class gxGraphics;
 

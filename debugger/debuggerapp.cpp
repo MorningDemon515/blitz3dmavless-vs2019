@@ -12,7 +12,7 @@ DebuggerApp::~DebuggerApp(){
 
 BOOL DebuggerApp::InitInstance(){
 
-	AfxInitRichEdit2();
+	AfxInitRichEdit();
 
 	main_frame=new MainFrame();
 

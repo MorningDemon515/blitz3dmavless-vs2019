@@ -3,7 +3,7 @@
 #define GXSCENE_H
 
 #include <map>
-#include <dx7/d3d.h>
+#include <d3d.h>
 
 #include "gxlight.h"
 
@@ -48,7 +48,7 @@ public:
 		BLEND_ADD=		3,
 		BLEND_DOT3=		4,
 		BLEND_MULTIPLY2=5,
-		BLEND_BUMPENVMAP=6,
+		BLEND_BUMPENVMAP = 6,
 	};
 	enum{
 		ZMODE_NORMAL=	0,

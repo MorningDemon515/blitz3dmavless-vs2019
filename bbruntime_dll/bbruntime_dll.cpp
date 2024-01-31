@@ -50,7 +50,18 @@ static void _cdecl seTranslator( unsigned int u,EXCEPTION_POINTERS* pExp ){
 	case EXCEPTION_INT_DIVIDE_BY_ZERO:
 		bbruntime_panic( "Integer divide by zero" );
 	case EXCEPTION_ACCESS_VIOLATION:
-		bbruntime_panic( "Memory access violation" );
+		if (ErrorMessagePool::memoryAccessViolation == 0) {
+			bbruntime_panic("Memory access violation");
+		}
+		else {
+			string s = "";
+			for (int i = 0; i < ErrorMessagePool::size; i++) {
+				if (!ErrorMessagePool::memoryAccessViolation[i].empty()) {
+					s = s + ErrorMessagePool::memoryAccessViolation[i] + "\n";
+				}
+			}
+			bbruntime_panic(s.c_str());
+		}
 	case EXCEPTION_ILLEGAL_INSTRUCTION:
 		bbruntime_panic( "Illegal instruction" );
 	case EXCEPTION_STACK_OVERFLOW:
@@ -199,7 +210,7 @@ static void link(){
 
 		if( !isalnum(t[0]) ) t=t.substr(1);
 
-		for( int k=0;k<(int)t.size();++k ){
+		for( int k=0;k<t.size();++k ){
 			if( isalnum(t[k]) || t[k]=='_' ) continue;
 			t=t.substr( 0,k );break;
 		}

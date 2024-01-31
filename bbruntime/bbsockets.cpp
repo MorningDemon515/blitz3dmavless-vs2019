@@ -102,8 +102,7 @@ int UDPStream::recv(){
 		if( ioctlsocket( sock,FIONREAD,&sz ) ){ e=-1;return 0; }
 		in_buf.resize( sz );in_get=0;
 		int len=sizeof(in_addr);
-		char *data = in_buf.size() ? &in_buf[0] : NULL;
-		n=::recvfrom( sock,data,sz,0,(sockaddr*)&in_addr,&len );
+		n=::recvfrom( sock,(char*)in_buf.data(),sz,0,(sockaddr*)&in_addr,&len );
 		if( n==SOCKET_ERROR ) continue;	//{ e=-1;return 0; }
 		in_buf.resize( n );
 		return getMsgIP();
@@ -117,8 +116,7 @@ int UDPStream::send( int ip,int port ){
 	int sz=out_buf.size();
 	out_addr.sin_addr.S_un.S_addr=htonl( ip );
 	out_addr.sin_port=htons( port ? port : addr.sin_port );
-	const char *data = out_buf.size() ? &out_buf[0] : NULL;
-	int n=::sendto( sock,data,sz,0,(sockaddr*)&out_addr,sizeof(out_addr) );
+	int n=::sendto( sock,(char*)out_buf.data(),sz,0,(sockaddr*)&out_addr,sizeof(out_addr) );
 	if( n!=sz ) return e=-1;
 	out_buf.clear();
 	return sz;
@@ -273,34 +271,22 @@ void TCPServer::remove( TCPStream *s ){
 	accepted_set.erase( s );
 }
 
-static inline bool debugUDPStream( UDPStream *p,const char* a ){
-	if (udp_set.count(p)) return true;
-	if( debug ){
+static inline void debugUDPStream( UDPStream *p ){
+	if( debug && !udp_set.count(p) ){
 		RTEX( "UDP Stream does not exist" );
-	} else {
-		errorLog.push_back(std::string(a)+std::string(": UDP Stream does not exist"));
 	}
-	return false;
 }
 
-static inline bool debugTCPStream( TCPStream *p,const char* a ){
-	if (tcp_set.count(p)) return true;
-	if( debug ){
+static inline void debugTCPStream( TCPStream *p ){
+	if( debug && !tcp_set.count(p) ){
 		RTEX( "TCP Stream does not exist" );
-	} else {
-		errorLog.push_back(std::string(a)+std::string(": TCP Stream does not exist"));
 	}
-	return false;
 }
 
-static inline bool debugTCPServer( TCPServer *p,const char* a ){
-	if (server_set.count(p)) return true;
-	if( debug ){
+static inline void debugTCPServer( TCPServer *p ){
+	if( debug && !server_set.count(p) ){
 		RTEX( "TCP Server does not exist" );
-	} else {
-		errorLog.push_back(std::string(a)+std::string(": TCP Server does not exist"));
 	}
-	return false;
 }
 
 static vector<int> host_ips;
@@ -316,7 +302,7 @@ int bbCountHostIPs( BBStr *host ){
 
 int bbHostIP( int index ){
 	if( debug ){
-		if (index<1 || index>(int)host_ips.size()){
+		if( index<1 || index>host_ips.size() ){
 			RTEX( "Host index out of range" );
 		}
 	}
@@ -339,38 +325,38 @@ UDPStream *bbCreateUDPStream( int port ){
 }
 
 void bbCloseUDPStream( UDPStream *p ){
-	if (!debugUDPStream( p,"CloseUDPStream" )) return;
+	debugUDPStream( p );
 	udp_set.erase( p );
 	delete p;
 }
 
 int bbRecvUDPMsg( UDPStream *p ){
-	if (!debugUDPStream( p,"RecvUDPMsg" )) return 0;
+	debugUDPStream( p );
 	return p->recv();
 }
 
 void bbSendUDPMsg( UDPStream *p,int ip,int port ){
-	if (!debugUDPStream( p,"SendUDPMsg" )) return;
+	debugUDPStream( p );
 	p->send( ip,port );
 }
 
 int bbUDPStreamIP( UDPStream *p ){
-	if (!debugUDPStream( p,"UDPStreamIP" )) return 0;
+	debugUDPStream( p );
 	return p->getIP();
 }
 
 int bbUDPStreamPort( UDPStream *p ){
-	if (!debugUDPStream( p,"UDPStreamPort" )) return 0;
+	debugUDPStream( p );
 	return p->getPort();
 }
 
 int bbUDPMsgIP( UDPStream *p ){
-	if (!debugUDPStream( p,"UDPMsgIP" )) return 0;
+	debugUDPStream( p );
 	return p->getMsgIP();
 }
 
 int bbUDPMsgPort( UDPStream *p ){
-	if (!debugUDPStream( p,"UDPMsgPort" )) return 0;
+	debugUDPStream( p );
 	return p->getMsgPort();
 }
 
@@ -425,7 +411,7 @@ TCPStream *bbOpenTCPStream( BBStr *server,int port,int local_port ){
 }
 
 void bbCloseTCPStream( TCPStream *p ){
-	if (!debugTCPStream( p,"CloseTCPStream" )) return;
+	debugTCPStream( p );
 	tcp_set.erase( p );
 	delete p;
 }
@@ -447,13 +433,13 @@ TCPServer *  bbCreateTCPServer( int port ){
 }
 
 void  bbCloseTCPServer( TCPServer *p ){
-	if (!debugTCPServer( p,"CloseTCPServer" )) return;
+	debugTCPServer( p );
 	server_set.erase( p );
 	delete p;
 }
 
 TCPStream *  bbAcceptTCPStream( TCPServer *server ){
-	if (!debugTCPServer( server,"AcceptTCPStream" )) return 0;
+	debugTCPServer( server );
 	if( !gx_runtime->idle() ) RTEX( 0 );
 	if( TCPStream *tcp=server->accept() ){
 		tcp_set.insert( tcp );
@@ -463,12 +449,12 @@ TCPStream *  bbAcceptTCPStream( TCPServer *server ){
 }
 
 int bbTCPStreamIP( TCPStream *p ){
-	if (!debugTCPStream( p,"TCPStreamIP" )) return 0;
+	debugTCPStream( p );
 	return p->getIP();
 }
 
 int bbTCPStreamPort( TCPStream *p ){
-	if (!debugTCPStream( p,"TCPStreamPort" )) return 0;
+	debugTCPStream( p );
 	return p->getPort();
 }
 

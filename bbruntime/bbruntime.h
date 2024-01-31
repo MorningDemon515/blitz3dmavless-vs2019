@@ -18,4 +18,10 @@ const char *bbruntime_run( gxRuntime *runtime,void (*pc)(),bool debug );
 
 void bbruntime_panic( const char *err );
 
+class ErrorMessagePool {
+public:
+	static std::string* memoryAccessViolation;
+	static int size;
+};
+
 #endif

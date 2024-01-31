@@ -17,7 +17,6 @@ public:
 	DECLARE_MESSAGE_MAP()
 
 	afx_msg int  OnCreate( LPCREATESTRUCT lpCreateStruct );
-	afx_msg void OnDropFiles(HDROP hDropInfo);
 	afx_msg void OnClose();
 	afx_msg void OnDestroy();
 	afx_msg BOOL OnEraseBkgnd( CDC *dc );
@@ -76,13 +75,13 @@ private:
 	CStatusBar statusBar;
 
 	map<CWnd*,Editor*> editors;
-	map<CWnd*,BHtmlHelp*> helps;
+	map<CWnd*,HtmlHelp*> helps;
 
 	string last_quick_help;
 
-	BHtmlHelp *getHelp();
-	BHtmlHelp *getHelp( int index );
-	BHtmlHelp *findHelp();
+	HtmlHelp *getHelp();
+	HtmlHelp *getHelp( int index );
+	HtmlHelp *findHelp();
 
 	Editor *getEditor( int index );
 
@@ -104,8 +103,8 @@ private:
 	void currentSet( Tabber *tabber,int index );
 
 	//htmlhelplistener
-	void helpOpen( BHtmlHelp *help,const string &file );
-	void helpTitleChange( BHtmlHelp *help,const string &title );
+	void helpOpen( HtmlHelp *help,const string &file );
+	void helpTitleChange( HtmlHelp *help,const string &title );
 };
 
 #endif

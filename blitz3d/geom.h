@@ -10,12 +10,14 @@ class Plane;
 class Matrix;
 class Transform;
 
+#undef INFINITY
+
 const float PI=3.14159265359f;		//180 degrees
 const float TWOPI=PI*2.0f;			//360 degrees
 const float HALFPI=PI*.5f;			//90  degrees
 const float QUARTERPI=PI*.25f;		//45  degrees
 const float EPSILON=.000001f;		//small value
-const float BINFINITY=10000000.0f;	//big value
+const float INFINITY=10000000.0f;	//big value
 
 class Vector{
 public:
@@ -339,7 +341,7 @@ public:
 class Box{
 public:
 	Vector a,b;
-	Box():a( Vector(BINFINITY,BINFINITY,BINFINITY) ),b( Vector(-BINFINITY,-BINFINITY,-BINFINITY) ){
+	Box():a( Vector(INFINITY,INFINITY,INFINITY) ),b( Vector(-INFINITY,-INFINITY,-INFINITY) ){
 	}
 	Box( const Vector &q ):a(q),b(q){
 	}
@@ -349,8 +351,8 @@ public:
 		update( l.o+l.d );
 	}
 	void clear(){
-		a.x=a.y=a.z=BINFINITY;
-		b.x=b.y=b.z=-BINFINITY;
+		a.x=a.y=a.z=INFINITY;
+		b.x=b.y=b.z=-INFINITY;
 	}
 	bool empty()const{
 		return b.x<a.x || b.y<a.y || b.z<a.z;
