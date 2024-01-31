@@ -202,6 +202,7 @@
       <OutputFile>../_release/bin/blitzcc.exe</OutputFile>
       <AdditionalDependencies>odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -243,11 +244,18 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="libs.h" />
+    <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="..\compiler\compiler___Win32_Blitz3DRelease\compiler.lib" />
     <Library Include="..\linker\linker___Win32_Blitz3DRelease\linker.lib" />
     <Library Include="..\stdutil\stdutil___Win32_Blitz3DRelease\stdutil.lib" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="blitz.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="blitz.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

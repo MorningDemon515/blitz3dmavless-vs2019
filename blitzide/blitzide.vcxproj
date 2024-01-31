@@ -307,8 +307,8 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="b3dlogo.bmp" />
+    <Image Include="blitzide.ico" />
     <Image Include="bplogo.bmp" />
-    <Image Include="IDE (logo, no code) 32.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

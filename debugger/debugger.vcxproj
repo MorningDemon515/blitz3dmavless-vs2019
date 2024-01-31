@@ -216,6 +216,7 @@
       <OutputFile>../_release/bin/debugger.dll</OutputFile>
       <ImportLibrary>.\debugger___Win32_Blitz3DRelease\debugger.lib</ImportLibrary>
       <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">

@@ -177,6 +177,7 @@
       <OutputFile>../_release/Blitz3D.exe</OutputFile>
       <AdditionalDependencies>dxguid.lib;odbc32.lib;odbccp32.lib;../dxsdk/lib/d3dim.lib;../dxsdk/lib/d3drm.lib;../dxsdk/lib/d3dx.lib;../dxsdk/lib/d3dxd.lib;../dxsdk/lib/d3dxof.lib;../dxsdk/lib/ddraw.lib;../dxsdk/lib/dinput.lib;../dxsdk/lib/dplayx.lib;../dxsdk/lib/dsetup.lib;../dxsdk/lib/dsound.lib;../dxsdk/lib/dxguid.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">

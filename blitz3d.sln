@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.34114.132
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "asm_makeinsts", "asm_makeinsts\asm_makeinsts.vcxproj", "{46ABB5CA-3CD9-4B86-9A5D-767DA29A2832}"
 EndProject
@@ -59,11 +59,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "blitz3d", "blitz3d\blitz3d.
 		{04B48711-03B0-4C26-984C-1A4F81DF9E0A} = {04B48711-03B0-4C26-984C-1A4F81DF9E0A}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "blitzide", "blitzide\blitzide.vcxproj", "{0CCF06BA-2EA8-4992-9A74-00E447B7B730}"
-	ProjectSection(ProjectDependencies) = postProject
-		{04B48711-03B0-4C26-984C-1A4F81DF9E0A} = {04B48711-03B0-4C26-984C-1A4F81DF9E0A}
-	EndProjectSection
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "compiler", "compiler\compiler.vcxproj", "{2E3F54AE-7D41-40E6-ADD4-02050133D68A}"
 	ProjectSection(ProjectDependencies) = postProject
 		{F2309C10-E3BB-4C1F-9878-DC4E93C8D772} = {F2309C10-E3BB-4C1F-9878-DC4E93C8D772}
@@ -97,6 +92,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "linker_dll", "linker_dll\li
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "stdutil", "stdutil\stdutil.vcxproj", "{04B48711-03B0-4C26-984C-1A4F81DF9E0A}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "blitzide", "blitzide\blitzide.vcxproj", "{0CCF06BA-2EA8-4992-9A74-00E447B7B730}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -167,16 +164,6 @@ Global
 		{A13199AD-E4F7-47D4-9AFD-C2EEDF9503F0}.Release|Win32.Build.0 = Release|Win32
 		{A13199AD-E4F7-47D4-9AFD-C2EEDF9503F0}.Template|Win32.ActiveCfg = Template|Win32
 		{A13199AD-E4F7-47D4-9AFD-C2EEDF9503F0}.Template|Win32.Build.0 = Template|Win32
-		{0CCF06BA-2EA8-4992-9A74-00E447B7B730}.Blitz2DRelease|Win32.ActiveCfg = Blitz2DRelease|Win32
-		{0CCF06BA-2EA8-4992-9A74-00E447B7B730}.Blitz2DRelease|Win32.Build.0 = Blitz2DRelease|Win32
-		{0CCF06BA-2EA8-4992-9A74-00E447B7B730}.Blitz3DRelease|Win32.ActiveCfg = Blitz3DRelease|Win32
-		{0CCF06BA-2EA8-4992-9A74-00E447B7B730}.Blitz3DRelease|Win32.Build.0 = Blitz3DRelease|Win32
-		{0CCF06BA-2EA8-4992-9A74-00E447B7B730}.Debug|Win32.ActiveCfg = Debug|Win32
-		{0CCF06BA-2EA8-4992-9A74-00E447B7B730}.Debug|Win32.Build.0 = Debug|Win32
-		{0CCF06BA-2EA8-4992-9A74-00E447B7B730}.Release|Win32.ActiveCfg = Release|Win32
-		{0CCF06BA-2EA8-4992-9A74-00E447B7B730}.Release|Win32.Build.0 = Release|Win32
-		{0CCF06BA-2EA8-4992-9A74-00E447B7B730}.Template|Win32.ActiveCfg = Template|Win32
-		{0CCF06BA-2EA8-4992-9A74-00E447B7B730}.Template|Win32.Build.0 = Template|Win32
 		{2E3F54AE-7D41-40E6-ADD4-02050133D68A}.Blitz2DRelease|Win32.ActiveCfg = Blitz2DRelease|Win32
 		{2E3F54AE-7D41-40E6-ADD4-02050133D68A}.Blitz2DRelease|Win32.Build.0 = Blitz2DRelease|Win32
 		{2E3F54AE-7D41-40E6-ADD4-02050133D68A}.Blitz3DRelease|Win32.ActiveCfg = Blitz3DRelease|Win32
@@ -247,8 +234,21 @@ Global
 		{04B48711-03B0-4C26-984C-1A4F81DF9E0A}.Release|Win32.Build.0 = Release|Win32
 		{04B48711-03B0-4C26-984C-1A4F81DF9E0A}.Template|Win32.ActiveCfg = Template|Win32
 		{04B48711-03B0-4C26-984C-1A4F81DF9E0A}.Template|Win32.Build.0 = Template|Win32
+		{0CCF06BA-2EA8-4992-9A74-00E447B7B730}.Blitz2DRelease|Win32.ActiveCfg = Blitz2DRelease|Win32
+		{0CCF06BA-2EA8-4992-9A74-00E447B7B730}.Blitz2DRelease|Win32.Build.0 = Blitz2DRelease|Win32
+		{0CCF06BA-2EA8-4992-9A74-00E447B7B730}.Blitz3DRelease|Win32.ActiveCfg = Blitz3DRelease|Win32
+		{0CCF06BA-2EA8-4992-9A74-00E447B7B730}.Blitz3DRelease|Win32.Build.0 = Blitz3DRelease|Win32
+		{0CCF06BA-2EA8-4992-9A74-00E447B7B730}.Debug|Win32.ActiveCfg = Debug|Win32
+		{0CCF06BA-2EA8-4992-9A74-00E447B7B730}.Debug|Win32.Build.0 = Debug|Win32
+		{0CCF06BA-2EA8-4992-9A74-00E447B7B730}.Release|Win32.ActiveCfg = Release|Win32
+		{0CCF06BA-2EA8-4992-9A74-00E447B7B730}.Release|Win32.Build.0 = Release|Win32
+		{0CCF06BA-2EA8-4992-9A74-00E447B7B730}.Template|Win32.ActiveCfg = Template|Win32
+		{0CCF06BA-2EA8-4992-9A74-00E447B7B730}.Template|Win32.Build.0 = Template|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {C0E5CEE9-FC80-4468-BB28-A65AD834EA25}
 	EndGlobalSection
 EndGlobal
