@@ -5,9 +5,9 @@
 #include "animation.h"
 #include "pivot.h"
 
-#include <dx7/dxfile.h>
-#include <dx7/rmxfguid.h>
-#include <dx7/rmxftmpl.h>
+#include "minidx9/include/dxfile.h"
+#include "minidx9/include/rmxfguid.h"
+#include "minidx9/include/rmxftmpl.h"
 
 extern gxRuntime *gx_runtime;
 static map<string,MeshModel*> frames_map;
@@ -270,7 +270,7 @@ static void parseMesh( IDirectXFileData *fileData,MeshModel *mesh ){
 	}
 	if( !mats.size() ) mats.push_back( Brush() );
 
-	for( k=0;k<(int)faces.size();++k ){
+	for( k=0;k<faces.size();++k ){
 		const FaceX &f=faces[k];
 		int *data=f.data;
 		int cnt=*data++;if( cnt<3 ) continue;

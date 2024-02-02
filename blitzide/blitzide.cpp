@@ -14,6 +14,7 @@ BOOL BlitzIDE::InitInstance(){
 #ifdef _DEBUG
 	AfxEnableMemoryTracking( true );
 #endif
+
 	AfxInitRichEdit();
 
 	prefs.open();

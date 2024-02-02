@@ -14,13 +14,13 @@ struct bbFile : public bbStream{
 		delete buf;
 	}
 	int read( char *buff,int size ){
-		return (int)buf->sgetn( (char*)buff,size );
+		return buf->sgetn( (char*)buff,size );
 	}
 	int write( const char *buff,int size ){
-		return (int)buf->sputn( (char*)buff,size );
+		return buf->sputn( (char*)buff,size );
 	}
 	int avail(){
-		return (int)buf->in_avail();
+		return buf->in_avail();
 	}
 	int eof(){
 		return buf->sgetc()==EOF;
@@ -29,24 +29,16 @@ struct bbFile : public bbStream{
 
 static set<bbFile*> file_set;
 
-static inline bool debugFile( bbFile *f,const char* a ){
-	if( file_set.count( f ) ) return true;
+static inline void debugFile( bbFile *f ){
 	if( debug ){
-		RTEX( "File does not exist" );
-	} else {
-		errorLog.push_back(std::string(a)+std::string(": File does not exist"));
+		if( !file_set.count( f ) ) RTEX( "File does not exist" );
 	}
-	return false;
 }
 
-static inline bool debugDir( gxDir *d,const char* a ){
-	if( gx_filesys->verifyDir( d ) ) return true;
+static inline void debugDir( gxDir *d ){
 	if( debug ){
-		RTEX( "Directory does not exist" );
-	} else {
-		errorLog.push_back(std::string(a)+std::string(": Directory does not exist"));
+		if( !gx_filesys->verifyDir( d ) ) RTEX( "Directory does not exist" );
 	}
-	return false;
 }
 
 static bbFile *open( BBStr *f,int n ){
@@ -74,18 +66,16 @@ bbFile *bbOpenFile( BBStr *f ){
 }
 
 void bbCloseFile( bbFile *f ){
-	if (!debugFile( f,"CloseFile" )) return;
+	debugFile( f );
 	file_set.erase( f );
 	delete f;
 }
 
 int bbFilePos( bbFile *f ){
-	if (!debugFile( f,"FilePos" )) return 0;
 	return f->buf->pubseekoff( 0,ios_base::cur );
 }
 
 int bbSeekFile( bbFile *f,int pos ){
-	if (!debugFile( f,"SeekFile" )) return 0;
 	return f->buf->pubseekoff( pos,ios_base::beg );
 }
 
@@ -95,12 +85,11 @@ gxDir *bbReadDir( BBStr *d ){
 }
 
 void bbCloseDir( gxDir *d ){
-	if (!debugDir( d,"CloseDir" )) return;
 	gx_filesys->closeDir( d );
 }
 
 BBStr *bbNextFile( gxDir *d ){
-	if (!debugDir( d,"NextFile" )) return d_new BBStr("");
+	debugDir( d );
 	return d_new BBStr( d->getNextFile() );
 }
 

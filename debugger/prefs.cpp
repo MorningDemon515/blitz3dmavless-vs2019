@@ -8,19 +8,9 @@
 
 Prefs prefs;
 
-static string getAppDir(){
-	char buff[MAX_PATH];
-	if( GetModuleFileName( 0,buff,MAX_PATH ) ){
-		string t=buff;
-		int n=t.find_last_of( '\\' );
-		if( n!=string::npos ) t=t.substr( 0,n );
-		return t;
-	}
-	return "";
-}
-
 void Prefs::open(){
-	homeDir = getAppDir();
+
+	homeDir=getenv( "blitzpath" );
 
 	AddFontResource( (homeDir+"/cfg/blitz.fon").c_str() );
 	setDefault();
@@ -55,7 +45,7 @@ void Prefs::open(){
 		}else if( t.substr( 0,4 )=="rgb_" ){
 			t=t.substr(4);
 			string s;in>>s;int rgb=0;
-			for( int k=0;k<(int)s.size();++k ){
+			for( int k=0;k<s.size();++k ){
 				int n=s[k];rgb=(rgb<<4)|(n<='9'?n-'0':(n&31)+9);
 			}
 			rgb=SWAPRB(rgb);
@@ -116,7 +106,7 @@ void Prefs::close(){
 	out<<"edit_backup\t"<<edit_backup<<endl;
 	out<<"img_toolbar\t"<<img_toolbar<<endl;
 	out<<"cmd_line\t"<<cmd_line<<endl;
-	for( int k=0;k<(int)recentFiles.size();++k ){
+	for( int k=0;k<recentFiles.size();++k ){
 		out<<"file_recent\t"<<recentFiles[k]<<endl;
 	}
 	out<<dec;

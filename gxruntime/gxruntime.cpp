@@ -3,7 +3,9 @@
 #include "gxruntime.h"
 #include "zmouse.h"
 
-//#define SPI_SETMOUSESPEED	113
+#include "gxutf8.h"
+
+#define SPI_SETMOUSESPEED	113
 
 struct gxRuntime::GfxMode{
 	DDSURFACEDESC2 desc;
@@ -59,7 +61,7 @@ static Debugger *debugger;
 static set<gxTimer*> timers;
 
 enum{
-	WM_STOP=WM_USER+1,WM_RUN,WM_END
+	WM_STOP=WM_APP+1,WM_RUN,WM_END
 };
 
 ////////////////////
@@ -639,7 +641,7 @@ bool gxRuntime::execute( const string &cmd_line ){
 void gxRuntime::setTitle( const string &t,const string &e ){
 	app_title=t;
 	app_close=e;
-	SetWindowText( hwnd,app_title.c_str() );
+	SetWindowTextW( hwnd,UTF8::convertToUtf16(app_title).c_str() );
 }
 
 //////////////////
@@ -694,9 +696,11 @@ void gxRuntime::closeAudio( gxAudio *a ){
 /////////////////
 gxInput *gxRuntime::openInput( int flags ){
 	if( input ) return 0;
-	IDirectInput7 *di;
-	if( DirectInputCreateEx( hinst,DIRECTINPUT_VERSION,IID_IDirectInput7,(void**)&di,0 )>=0 ){
-		input=d_new gxInput( this,di );
+
+	IDirectInput8 *di;
+//	if (DirectInputCreateEx(hinst, DIRECTINPUT_VERSION, IID_IDirectInput7, (void**)&di, 0) >= 0) {
+	if (DirectInput8Create(hinst, DIRECTINPUT_VERSION, IID_IDirectInput8, (void**)&di, 0) >= 0) {
+			input=d_new gxInput( this,di );
 		acquireInput();
 	}else{
 		debugInfo( "Create DirectInput failed" );
@@ -1046,9 +1050,9 @@ void gxRuntime::enumGfx(){
 }
 
 void gxRuntime::denumGfx(){
-	for( int k=0;k<(int)drivers.size();++k ){
+	for( int k=0;k<drivers.size();++k ){
 		gxRuntime::GfxDriver *d=drivers[k];
-		for( int j=0;j<(int)d->modes.size();++j ) delete d->modes[j];
+		for( int j=0;j<d->modes.size();++j ) delete d->modes[j];
 		delete d->guid;
 		delete d;
 	}

@@ -9,9 +9,9 @@
 //-----------------------------------------------------------------------------
 #include <windows.h>
 #include <windowsx.h>
-#include <dx7/ddraw.h>
-#include <dx7/dinput.h>
-#include <dx7/dmusici.h>
+#include <ddraw.h>
+#include <dinput.h>
+//#include <dmusici.h>
 
 typedef HRESULT(WINAPI * DIRECTDRAWCREATE)( GUID*, LPDIRECTDRAW*, IUnknown* );
 typedef HRESULT(WINAPI * DIRECTDRAWCREATEEX)( GUID*, VOID**, REFIID, IUnknown* );
@@ -276,6 +276,7 @@ VOID GetDXVersion( DWORD* pdwDXVersion, DWORD* pdwDXPlatform )
     ///////////////////////////////////////////////////////////////////////////
 
     // Check for DMusic, which was introduced with DX6.1
+	/*
     LPDIRECTMUSIC pDMusic = NULL;
     CoInitialize( NULL );
     hr = CoCreateInstance( CLSID_DirectMusic, NULL, CLSCTX_INPROC_SERVER,
@@ -291,7 +292,7 @@ VOID GetDXVersion( DWORD* pdwDXVersion, DWORD* pdwDXPlatform )
     (*pdwDXVersion) = 0x601;
     pDMusic->Release();
     CoUninitialize();
-    
+    */
 
     ///////////////////////////////////////////////////////////////////////////
     // DirectX 7.0 Checks

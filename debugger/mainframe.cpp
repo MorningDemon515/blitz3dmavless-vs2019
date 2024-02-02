@@ -5,10 +5,12 @@
 #include "debuggerapp.h"
 #include "prefs.h"
 
+#include "../gxruntime/gxutf8.h"
+
 #define WM_IDLEUPDATECMDUI  0x0363  // wParam == bDisableIfNoHandler
 
 enum{
-	WM_STOP=WM_USER+1,WM_RUN,WM_END
+	WM_STOP=WM_APP+1,WM_RUN,WM_END
 };
 
 enum{
@@ -204,9 +206,9 @@ void MainFrame::debugLeave(){
 
 void MainFrame::debugMsg( const char *msg,bool serious ){
 	if( serious ){
-		::MessageBox( 0,msg,"Runtime Error",MB_OK|MB_ICONWARNING|MB_TOPMOST|MB_SETFOREGROUND );
+		::MessageBoxW( 0,UTF8::convertToUtf16(msg).c_str(),L"Runtime Error",MB_OK|MB_ICONWARNING|MB_TOPMOST|MB_SETFOREGROUND );
 	}else{
-		::MessageBox( 0,msg,"Runtime Message",MB_OK|MB_ICONINFORMATION|MB_TOPMOST|MB_SETFOREGROUND );
+		::MessageBoxW( 0,UTF8::convertToUtf16(msg).c_str(),L"Runtime Message",MB_OK|MB_ICONINFORMATION|MB_TOPMOST|MB_SETFOREGROUND );
 	}
 }
 
@@ -271,12 +273,7 @@ SourceFile *MainFrame::sourceFile(const char *file){
 		ES_NOHIDESEL|ES_MULTILINE|ES_AUTOHSCROLL|ES_AUTOVSCROLL,
 		CRect( 0,0,0,0 ),&tabber,1 );
 
-	FILE *f;
-
-	//if( FILE *f=fopen( file,"rb" ) ){
-
-	errno_t err = fopen_s(&f, file, "rb");
-	if (err==0){
+	if( FILE *f=fopen( file,"rb" ) ){
 		fseek( f,0,SEEK_END );
 		int sz=ftell( f );
 		fseek( f,0,SEEK_SET );
@@ -290,8 +287,8 @@ SourceFile *MainFrame::sourceFile(const char *file){
 
 	file_tabs.insert( make_pair(file,tab) );
 
-	if( char *p=(char *)strrchr(file,'/') ) file=p+1;
-	if (char *p=(char *)strrchr(file, '\\')) file = p + 1;
+	if( const char *p=strrchr(file,'/') ) file=p+1;
+	if( const char *p=strrchr(file,'\\') ) file=p+1;
 	tabber.insert( tab,t,file );
 
 	tabber.setCurrent( tab );

@@ -4,7 +4,7 @@
 
 #include <set>
 #include <string>
-#include <dx7/d3d.h>
+#include <d3d.h>
 
 #include "ddutil.h"
 
@@ -13,6 +13,9 @@
 #include "gxscene.h"
 #include "gxmesh.h"
 #include "gxmovie.h"
+
+#include <ft2build.h>
+#include FT_FREETYPE_H
 
 class gxRuntime;
 
@@ -27,6 +30,8 @@ public:
 	DDPIXELFORMAT primFmt,zbuffFmt;
 
 	DDPIXELFORMAT texRGBFmt[2],texAlphaFmt[2],texRGBAlphaFmt[2],texRGBMaskFmt[2];
+
+    FT_Library ftLibrary;
 
 	gxGraphics( gxRuntime *runtime,IDirectDraw7 *dirDraw,IDirectDrawSurface7 *front,IDirectDrawSurface7 *back,bool d3d );
 	~gxGraphics();

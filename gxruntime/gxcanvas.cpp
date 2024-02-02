@@ -4,6 +4,7 @@
 #include "gxgraphics.h"
 #include "gxruntime.h"
 #include "asmcoder.h"
+#include "gxutf8.h"
 
 #define DEBUG_BITMASK
 
@@ -403,7 +404,7 @@ void gxCanvas::oval( int x1,int y1,int w,int h,bool solid ){
 		y=dest.top-cy;
 		for( int t=dest.top;t<dest.bottom;++y,++t ){
 			float x=sqrt( rsq-y*y )*ar;
-			int xa=(int)floor( cx-x ),xb=(int)floor( cx+x );
+			int xa=floor( cx-x ),xb=floor( cx+x );
 			if( xb<=xa || xa>=viewport.right || xb<=viewport.left ) continue;
 			Rect dr;dr.top=t;dr.bottom=t+1;
 			dr.left=xa<viewport.left ? viewport.left : xa;
@@ -414,14 +415,14 @@ void gxCanvas::oval( int x1,int y1,int w,int h,bool solid ){
 		return;
 	}
 
-	int p_xa,p_xb,t,hh=(int)floor(cy);
+	int p_xa,p_xb,t,hh=floor(cy);
 
-	p_xa=p_xb=(int)cx;
+	p_xa=p_xb=cx;
 	t=dest.top;y=t-cy;
 	if( dest.top>y1 ){ --t;--y; }
 	for( ;t<=hh;++y,++t ){
 		float x=sqrt( rsq-y*y )*ar;
-		int xa=(int)floor( cx-x ),xb=(int)floor( cx+x );
+		int xa=floor( cx-x ),xb=floor( cx+x );
 		Rect r1( xa,t,p_xa-xa,1 );if( r1.right<=r1.left ) r1.right=r1.left+1;
 		if( clip( &r1 ) ) surf->Blt( &r1,0,0,DDBLT_WAIT|DDBLT_COLORFILL,&bltfx );
 		Rect r2( p_xb,t,xb-p_xb,1 );if( r2.left>=r2.right ) r2.left=r2.right-1;
@@ -429,12 +430,12 @@ void gxCanvas::oval( int x1,int y1,int w,int h,bool solid ){
 		p_xa=xa;p_xb=xb;
 	}
 
-	p_xa=p_xb=(int)cx;
+	p_xa=p_xb=cx;
 	t=dest.bottom-1;y=t-cy;
 	if( dest.bottom<y1+h ){ ++t;++y; }
 	for( ;t>hh;--y,--t ){
 		float x=sqrt( rsq-y*y )*ar;
-		int xa=(int)floor( cx-x ),xb=(int)floor( cx+x );
+		int xa=floor( cx-x ),xb=floor( cx+x );
 		Rect r1( xa,t,p_xa-xa,1 );if( r1.right<=r1.left ) r1.right=r1.left+1;
 		if( clip( &r1 ) ) surf->Blt( &r1,0,0,DDBLT_WAIT|DDBLT_COLORFILL,&bltfx );
 		Rect r2( p_xb,t,xb-p_xb,1 );if( r2.left>=r2.right ) r2.left=r2.right-1;
@@ -471,12 +472,14 @@ void gxCanvas::text( int x,int y,const string &t ){
 	if( tx>=viewport.right ) return;
 
 	int b=0,w;
-	while( b<(int)t.size() && tx+(w=font->charWidth( t[b] ))<=viewport.left ){
-		tx+=w;x+=w;++b;
+	while( b<t.size() && tx+(w=font->charAdvance( UTF8::decodeCharacter(t.c_str(), b) ))<=viewport.left ){
+		tx+=w;x+=w;
+		b += UTF8::measureCodepoint(t[b]);
 	}
 	int e=b;
-	while( e<(int)t.size() && tx<viewport.right ){
-		tx+=font->charWidth( t[e] );++e;
+	while( e<t.size() && tx<viewport.right ){
+		tx+=font->charAdvance( UTF8::decodeCharacter(t.c_str(), e) );
+		e += UTF8::measureCodepoint(t[e]);
 	}
 
 	if( e>b ) font->render( this,format.toARGB( color_surf ),x,y,t.substr( b,e-b ) );
