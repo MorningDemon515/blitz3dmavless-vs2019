@@ -1338,20 +1338,23 @@ void  bbModifyTerrain( Terrain *t,int x,int z,float h,int realtime ){
 ////////////////////
 // AUDIO COMMANDS //
 ////////////////////
-Entity *  bbCreateListener( Entity *p,float roll,float dopp,float dist ){
-	if( debug ){
+Entity* bbGetListener(Entity* p, float roll, float dopp, float dist) {
+	if (debug) {
 		debugParent(p);
-		if( listener ) RTEX( "Listener already created" );
+		if (listener) RTEX("Listener already created");
 	}
-	listener=d_new Listener( roll,dopp,dist );
-	return insertEntity( listener,p );
+
+	if (!listener) {
+		listener = d_new Listener(roll, dopp, dist);
+		insertEntity(listener, 0);
+	}
+	listener->set(roll, dopp, dist);
+	listener->setParent(p);
+	return listener;
 }
 
 gxChannel *  bbEmitSound( gxSound *sound,Object *o ){
-	if( debug ){
-		debugObject(o);
-		if( !listener ) RTEX( "No Listener created" );
-	}
+	if (!listener) bbGetListener(0, 1.f, 1.f, 1.f);
 	return o->emitSound( sound );
 }
 
@@ -2164,7 +2167,7 @@ void blitz3d_link( void (*rtSym)( const char *sym,void *pc ) ){
 	rtSym( "#TerrainHeight%terrain%terrain_x%terrain_z",bbTerrainHeight );
 	rtSym( "ModifyTerrain%terrain%terrain_x%terrain_z#height%realtime=0",bbModifyTerrain );
 
-	rtSym( "%CreateListener%parent#rolloff_factor=1#doppler_scale=1#distance_scale=1",bbCreateListener );
+	rtSym( "%GetListener%parent#rolloff_factor=1#doppler_scale=1#distance_scale=1",bbGetListener);
 	rtSym( "%EmitSound%sound%entity",bbEmitSound );
 
 	rtSym( "%CopyEntity%entity%parent=0",bbCopyEntity );

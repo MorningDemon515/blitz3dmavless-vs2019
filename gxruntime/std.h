@@ -2,8 +2,6 @@
 #ifndef STD_H
 #define STD_H
 
-#include "..//fmod375/include/fmod.h"
-
 #include "../config/config.h"
 #include "../stdutil/stdutil.h"
 

@@ -86,8 +86,8 @@
       <AssemblerOutput>NoListing</AssemblerOutput>
       <MinimalRebuild>false</MinimalRebuild>
       <CallingConvention>StdCall</CallingConvention>
-	  <AdditionalIncludeDirectories>..\freetype\include;</AdditionalIncludeDirectories>
-	  </ClCompile>
+      <AdditionalIncludeDirectories>..\freetype\include;..\OpenAL 1.1 SDK\include;..\libogg\include;..\libvorbis\include</AdditionalIncludeDirectories>
+    </ClCompile>
     <ResourceCompile>
       <Culture>0x0409</Culture>
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -117,7 +117,7 @@
       <ProgramDataBaseFileName>.\Debug\</ProgramDataBaseFileName>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <CallingConvention>StdCall</CallingConvention>
-	  <AdditionalIncludeDirectories>..\freetype\include;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\freetype\include;</AdditionalIncludeDirectories>
     </ClCompile>
     <ResourceCompile>
       <Culture>0x0409</Culture>

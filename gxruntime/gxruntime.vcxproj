@@ -86,7 +86,7 @@
       <AssemblerOutput>NoListing</AssemblerOutput>
       <MinimalRebuild>false</MinimalRebuild>
       <CallingConvention>StdCall</CallingConvention>
-	  <AdditionalIncludeDirectories>..\freetype\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\freetype\include;..\OpenAL 1.1 SDK\include;..\libogg\include;..\libvorbis\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <ResourceCompile>
       <Culture>0x0409</Culture>
@@ -119,7 +119,7 @@
       <ProgramDataBaseFileName>.\Debug\</ProgramDataBaseFileName>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <CallingConvention>StdCall</CallingConvention>
-	  <AdditionalIncludeDirectories>..\freetype\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\freetype\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <ResourceCompile>
       <Culture>0x0409</Culture>
@@ -136,7 +136,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="ddutil.cpp" />
-	<ClCompile Include="gxfont.cpp" />
+    <ClCompile Include="gxfont.cpp" />
     <ClCompile Include="gxaudio.cpp" />
     <ClCompile Include="gxcanvas.cpp" />
     <ClCompile Include="gxchannel.cpp" />
@@ -154,7 +154,7 @@
     <ClCompile Include="gxscene.cpp" />
     <ClCompile Include="gxsound.cpp" />
     <ClCompile Include="gxtimer.cpp" />
-	<ClCompile Include="gxutf8.cpp" />
+    <ClCompile Include="gxutf8.cpp" />
     <ClCompile Include="std.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">std.h</PrecompiledHeaderFile>
@@ -165,7 +165,7 @@
   <ItemGroup>
     <ClInclude Include="asmcoder.h" />
     <ClInclude Include="ddutil.h" />
-	<ClInclude Include="gxfont.h" />
+    <ClInclude Include="gxfont.h" />
     <ClInclude Include="gxaudio.h" />
     <ClInclude Include="gxcanvas.h" />
     <ClInclude Include="gxchannel.h" />
@@ -181,7 +181,7 @@
     <ClInclude Include="gxscene.h" />
     <ClInclude Include="gxsound.h" />
     <ClInclude Include="gxtimer.h" />
-	<ClInclude Include="gxutf8.h" />
+    <ClInclude Include="gxutf8.h" />
     <ClInclude Include="std.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
