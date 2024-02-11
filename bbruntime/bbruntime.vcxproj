@@ -119,7 +119,7 @@
       <AssemblerOutput>NoListing</AssemblerOutput>
       <MinimalRebuild>false</MinimalRebuild>
       <CallingConvention>StdCall</CallingConvention>
-      <AdditionalIncludeDirectories>..\freetype\include;..\OpenAL 1.1 SDK\include;..\libogg\include;..\libvorbis\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\freetype\include;..\OpenAL 1.1 SDK\include;..\libogg\include;..\libvorbis\include;..\freealut\include</AdditionalIncludeDirectories>
     </ClCompile>
     <ResourceCompile>
       <Culture>0x0409</Culture>

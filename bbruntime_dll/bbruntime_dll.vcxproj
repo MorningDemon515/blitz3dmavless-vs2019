@@ -131,7 +131,7 @@
       <OpenMPSupport>false</OpenMPSupport>
       <MinimalRebuild>false</MinimalRebuild>
       <CallingConvention>StdCall</CallingConvention>
-      <AdditionalIncludeDirectories>..\freetype\include;..\OpenAL 1.1 SDK\include;..\libogg\include;..\libvorbis\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\freetype\include;..\OpenAL 1.1 SDK\include;..\libogg\include;..\libvorbis\include;..\freealut\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Midl>
       <SuppressStartupBanner>true</SuppressStartupBanner>
@@ -177,6 +177,7 @@
     <Library Include="..\libogg\lib\libogg.lib" />
     <Library Include="..\libvorbis\lib\libvorbis_static.lib" />
     <Library Include="..\libvorbis\lib\libvorbisfile_static.lib" />
+    <Library Include="..\freealut\lib\alut.lib" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\bbruntime\bbruntime.vcxproj">
