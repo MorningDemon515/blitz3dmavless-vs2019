@@ -69,7 +69,7 @@
       <ProgramDataBaseFileName>.\Debug\</ProgramDataBaseFileName>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <CallingConvention>StdCall</CallingConvention>
-	  <AdditionalIncludeDirectories>..\freetype\include;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\freetype\include;</AdditionalIncludeDirectories>
     </ClCompile>
     <Midl>
       <TypeLibraryName>.\Debug\blitz.tlb</TypeLibraryName>
@@ -124,7 +124,7 @@
       <AssemblerOutput>NoListing</AssemblerOutput>
       <MinimalRebuild>false</MinimalRebuild>
       <CallingConvention>StdCall</CallingConvention>
-	  <AdditionalIncludeDirectories>..\freetype\include;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\freetype\include;..\blitz3d\minidx9\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Midl>
       <TypeLibraryName>.\Release\blitz.tlb</TypeLibraryName>

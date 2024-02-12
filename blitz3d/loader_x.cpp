@@ -338,8 +338,12 @@ static MeshModel *parseFile( const string &file ){
 
 	if( DirectXFileCreate( &xfile )<0 ) return 0;
 
-    if( xfile->RegisterTemplates( (VOID*)D3DRM_XTEMPLATES,D3DRM_XTEMPLATE_BYTES )<0 ){
-		xfile->Release();return 0;
+   // if( xfile->RegisterTemplates( (VOID*)D3DRM_XTEMPLATES,D3DRM_XTEMPLATE_BYTES )<0 ){
+	//	xfile->Release();return 0;
+///	}
+	if (FAILED(xfile->RegisterTemplates(const_cast<VOID*>(static_cast<const void*>(D3DRM_XTEMPLATES)), D3DRM_XTEMPLATE_BYTES))) {
+		xfile->Release();
+		return 0;
 	}
 	if( xfile->CreateEnumObject( (void*)file.c_str(),DXFILELOAD_FROMFILE,&enumObj )<0 ){
 		xfile->Release();return 0;

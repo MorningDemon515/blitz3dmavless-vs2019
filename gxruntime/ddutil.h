@@ -5,7 +5,7 @@
 #include <ddraw.h>
 
 class gxGraphics;
-typedef IDirectDrawSurface7 ddSurf;
+typedef IDirectDrawSurface ddSurf;
 
 struct ddUtil{
 

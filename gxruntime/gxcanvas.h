@@ -7,7 +7,7 @@
 class gxFont;
 class gxGraphics;
 
-typedef IDirectDrawSurface7 ddSurf;
+typedef IDirectDrawSurface ddSurf;
 
 class gxCanvas{
 public:

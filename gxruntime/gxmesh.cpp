@@ -7,7 +7,7 @@
 
 extern gxRuntime *gx_runtime;
 
-gxMesh::gxMesh( gxGraphics *g,IDirect3DVertexBuffer7 *vs,WORD *is,int max_vs,int max_ts ):
+gxMesh::gxMesh( gxGraphics *g,IDirect3DVertexBuffer9 *vs,WORD *is,int max_vs,int max_ts ):
 graphics(g),locked_verts(0),vertex_buff(vs),tri_indices(is),max_verts(max_vs),max_tris(max_ts),mesh_dirty(false){
 }
 
@@ -39,9 +39,21 @@ bool gxMesh::lock( bool all ){
 		flags|=(all ? DDLOCK_DISCARDCONTENTS : DDLOCK_NOOVERWRITE);
 	}
 
-	if( vertex_buff->Lock( flags,(void**)&locked_verts,0 )>=0 ){
+	/*if (vertex_buff->Lock(flags, (void**)&locked_verts, 0) >= 0) {
 		mesh_dirty=false;
 		return true;
+	}*/
+
+	void* locked_verts = nullptr;
+	HRESULT hr = vertex_buff->Lock(flags, 0, reinterpret_cast<void**>(&locked_verts), 0);
+	if (hr == D3D_OK) {
+		mesh_dirty = false;
+		return true;
+	}
+	else {
+		// 锁定失败，根据需要进行错误处理
+		// 可以在这里添加适当的错误处理代码
+		return false;
 	}
 
 	static dxVertex *err_verts=new dxVertex[32768];
@@ -100,8 +112,8 @@ void gxMesh::restore(){
 
 void gxMesh::render( int first_vert,int vert_cnt,int first_tri,int tri_cnt ){
 	unlock();
-	graphics->dir3dDev->DrawIndexedPrimitiveVB(
+	graphics->dir3dDev->DrawIndexedPrimitive(
 		D3DPT_TRIANGLELIST,
-		vertex_buff,first_vert,vert_cnt,
-		tri_indices+first_tri*3,tri_cnt*3,0 );
+		reinterpret_cast<INT>(vertex_buff),first_vert,vert_cnt,
+		reinterpret_cast<DWORD>(tri_indices+first_tri*3),tri_cnt*3);
 }

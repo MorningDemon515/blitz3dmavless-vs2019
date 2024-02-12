@@ -5,7 +5,7 @@
 
 extern gxRuntime *gx_runtime;
 
-gxGraphics::gxGraphics( gxRuntime *rt,IDirectDraw7 *dd,IDirectDrawSurface7 *fs,IDirectDrawSurface7 *bs,bool d3d ):
+gxGraphics::gxGraphics( gxRuntime *rt,IDirectDraw *dd,IDirectDrawSurface *fs,IDirectDrawSurface *bs,bool d3d ):
 runtime(rt),dirDraw(dd),dir3d(0),dir3dDev(0),def_font(0),gfx_lost(false),dummy_mesh(0){
 
 	dirDraw->QueryInterface( IID_IDirectDraw,(void**)&ds_dirDraw );
@@ -84,32 +84,27 @@ void gxGraphics::getGamma( int r,int g,int b,float *dr,float *dg,float *db ){
 void gxGraphics::backup(){
 }
 
-bool gxGraphics::restore(){
-
-	while( dirDraw->TestCooperativeLevel()!=DD_OK ){
-
-		if( dirDraw->TestCooperativeLevel()==DDERR_WRONGMODE ) return false;
-
-		Sleep( 100 );
+bool gxGraphics::restore() {
+	while (dir3dDev->TestCooperativeLevel() != D3D_OK) {
+		//if (dir3dDev->TestCooperativeLevel() == D3DERR_WRONGMODE) return false;
+		Sleep(100);
 	}
 
-	if( back_canvas->getSurface()->IsLost()==DD_OK ) return true;
+	if (back_canvas->getSurface()->IsLost() == D3D_OK) return true;
 
-	dirDraw->RestoreAllSurfaces();
-
-	//restore all canvases
-	set<gxCanvas*>::iterator it;
-	for( it=canvas_set.begin();it!=canvas_set.end();++it ){
+	// Restore all canvases
+	std::set<gxCanvas*>::iterator it;
+	for (it = canvas_set.begin(); it != canvas_set.end(); ++it) {
 		(*it)->restore();
 	}
 
 #ifdef PRO
-	//restore all meshes (b3d surfaces)
-	set<gxMesh*>::iterator mesh_it;
-	for( mesh_it=mesh_set.begin();mesh_it!=mesh_set.end();++mesh_it ){
+	// Restore all meshes (b3d surfaces)
+	std::set<gxMesh*>::iterator mesh_it;
+	for (mesh_it = mesh_set.begin(); mesh_it != mesh_set.end(); ++mesh_it) {
 		(*mesh_it)->restore();
 	}
-	if( dir3d ) dir3d->EvictManagedTextures();
+	if (device1) device1->EvictManagedResources();//EvictManagedTextures(D3DRENDERSTATE_EVICTMANAGEDTEXTURES
 #endif
 
 	return true;
@@ -267,8 +262,8 @@ void gxGraphics::freeFont( gxFont *f ){
 #ifdef PRO
 
 static int maxDevType;
-
-static HRESULT CALLBACK enumDevice( char *desc,char *name,D3DDEVICEDESC7 *devDesc,void *context ){
+/*
+static HRESULT CALLBACK enumDevice( char *desc,char *name,D3DCAPS9 *devDesc,void *context ){//D3DDEVICEDESC7
 	gxGraphics *g=(gxGraphics*)context;
 	int t=0;
 	GUID guid=devDesc->deviceGUID;
@@ -280,6 +275,17 @@ static HRESULT CALLBACK enumDevice( char *desc,char *name,D3DDEVICEDESC7 *devDes
 		maxDevType=t;
 	}
 	return D3DENUMRET_OK;
+}*/
+
+static HRESULT CALLBACK enumDevice(char* desc, char* name, D3DCAPS9* devDesc, void* context) {//D3DDEVICEDESC7
+	PDIRECT3D9 d3d = Direct3DCreate9(D3D_SDK_VERSION);
+	if (d3d) {
+		D3DCAPS9 caps;
+		if (SUCCEEDED(d3d->GetDeviceCaps(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, &caps))) {
+			// 在这里处理设备信息
+		}
+		d3d->Release(); // 释放Direct3D对象
+	}
 }
 
 static HRESULT CALLBACK enumZbuffFormat( LPDDPIXELFORMAT format,void *context ){
@@ -409,12 +415,12 @@ static void pickTexFmts( gxGraphics *g,int hi ){
 		else g->texRGBMaskFmt[hi]=tex_fmts[pick].fmt;
 	}
 }
-
+/*
 gxScene *gxGraphics::createScene( int flags ){
 	if( scene_set.size() ) return 0;
 
 	//get d3d
-	if( dirDraw->QueryInterface( IID_IDirect3D7,(void**)&dir3d )>=0 ){
+	if( dirDraw->QueryInterface( IID_IDirect3D9,(void**)&dir3d )>=0 ){
 		//enum devices
 		maxDevType=0;
 		if( dir3d->EnumDevices( enumDevice,this )>=0 && maxDevType>1 ){
@@ -463,6 +469,66 @@ gxScene *gxGraphics::createScene( int flags ){
 		dir3d=0;
 	}
 	return 0;
+}*/
+
+gxScene* gxGraphics::createScene(int flags) {
+	if (scene_set.size()) return 0;
+
+	// 定义纹理宽度和高度
+	int width = 256;
+	int height = 256;
+
+	//get d3d
+	IDirect3D9* dir3d = 0;
+	if (dirDraw->QueryInterface(IID_IDirect3D9, (void**)&dir3d) >= 0) {
+		D3DADAPTER_IDENTIFIER9 adapterId;
+		dir3d->GetAdapterIdentifier(D3DADAPTER_DEFAULT, 0, &adapterId);
+		D3DPRESENT_PARAMETERS d3dpp;
+		ZeroMemory(&d3dpp, sizeof(d3dpp));
+		d3dpp.BackBufferWidth = 800;
+		d3dpp.BackBufferHeight = 600;
+		d3dpp.BackBufferCount = 1;
+		d3dpp.BackBufferFormat = D3DFMT_X8R8G8B8;
+		d3dpp.MultiSampleType = D3DMULTISAMPLE_NONE;
+		d3dpp.MultiSampleQuality = 0;
+		d3dpp.SwapEffect = D3DSWAPEFFECT_DISCARD;
+		d3dpp.hDeviceWindow = NULL;
+		d3dpp.Windowed = TRUE;
+		d3dpp.EnableAutoDepthStencil = TRUE;
+		d3dpp.AutoDepthStencilFormat = D3DFMT_D16;
+
+		IDirect3DDevice9* dir3dDev = 0;
+		if (dir3d->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, NULL, D3DCREATE_SOFTWARE_VERTEXPROCESSING, &d3dpp, &dir3dDev) >= 0) {
+			IDirect3DSurface9* backBuffer = nullptr;
+			dir3dDev->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &backBuffer);
+			D3DSURFACE_DESC backbufferDesc;
+			backBuffer->GetDesc(&backbufferDesc);
+			D3DFORMAT zbuffFmt = D3DFMT_D16;
+			IDirect3DSurface9* zBuffer = nullptr;
+			dir3d->CheckDepthStencilMatch(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, backbufferDesc.Format, D3DFMT_D24S8, zbuffFmt);
+			dir3dDev->CreateDepthStencilSurface(800, 600, zbuffFmt, backbufferDesc.MultiSampleType, backbufferDesc.MultiSampleQuality, FALSE, &zBuffer, nullptr);
+			dir3dDev->SetDepthStencilSurface(zBuffer);
+
+			// Create texture
+			IDirect3DTexture9* texture = nullptr;
+			if (SUCCEEDED(dir3dDev->CreateTexture(width, height, 1, D3DUSAGE_DYNAMIC, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &texture, NULL))) {
+				gxScene* scene = new gxScene(this, back_canvas);
+				scene_set.insert(scene);
+
+				dummy_mesh = createMesh(8, 12, 0);
+
+				return scene;
+			}
+
+			zBuffer->Release();
+			backBuffer->Release();
+			dir3dDev->Release();
+			dir3dDev = 0;
+		}
+		dir3d->Release();
+		dir3d = 0;
+	}
+	return 0;
 }
 
 gxScene *gxGraphics::verifyScene( gxScene *s ){
@@ -478,7 +544,7 @@ void gxGraphics::freeScene( gxScene *scene ){
 	if( dir3d ){ dir3d->Release();dir3d=0; }
 	delete scene;
 }
-
+/*
 gxMesh *gxGraphics::createMesh( int max_verts,int max_tris,int flags ){
 
 	static const int VTXFMT=
@@ -494,12 +560,50 @@ gxMesh *gxGraphics::createMesh( int max_verts,int max_tris,int flags ){
 
 	D3DVERTEXBUFFERDESC desc={ sizeof(desc),vbflags,VTXFMT,max_verts };
 
-	IDirect3DVertexBuffer7 *buff;
+	IDirect3DVertexBuffer9 *buff;
 	if( dir3d->CreateVertexBuffer( &desc,&buff,0 )<0 ) return 0;
 	WORD *indices=d_new WORD[max_tris*3];
 	gxMesh *mesh=d_new gxMesh( this,buff,indices,max_verts,max_tris );
 	mesh_set.insert( mesh );
 	return mesh;
+}*/
+
+gxMesh* gxGraphics::createMesh(int max_verts, int max_tris, int flags) {
+	struct VertexType {
+		D3DXVECTOR3 position;  // 顶点位置
+		D3DXVECTOR3 normal;    // 顶点法线
+		D3DCOLOR diffuse;     // 顶点颜色
+		float tu, tv;          // 纹理坐标
+	};
+	static const int VTXFMT =
+		D3DFVF_XYZ | D3DFVF_NORMAL | D3DFVF_DIFFUSE | D3DFVF_TEX2 |
+		D3DFVF_TEXCOORDSIZE2(0) | D3DFVF_TEXCOORDSIZE2(1);
+
+	int vbflags = 0;
+
+	//XP or less?
+	if (runtime->osinfo.dwMajorVersion < 6) {
+		vbflags |= D3DVBCAPS_WRITEONLY;
+	}
+
+	// 创建顶点缓冲区
+	IDirect3DDevice9* dir3dDev = 0;
+	if (dirDraw->QueryInterface(IID_IDirect3DDevice9, (void**)&dir3dDev) >= 0) {
+		IDirect3DVertexBuffer9* buff;
+		if (dir3dDev->CreateVertexBuffer(max_verts * sizeof(VertexType), D3DUSAGE_WRITEONLY, VTXFMT, D3DPOOL_MANAGED, &buff, NULL) < 0) {
+			dir3dDev->Release();
+			return 0;
+		}
+
+		WORD* indices = d_new WORD[max_tris * 3];
+		gxMesh* mesh = d_new gxMesh(this, buff, indices, max_verts, max_tris);
+		mesh_set.insert(mesh);
+
+		dir3dDev->Release();
+		return mesh;
+	}
+
+	return 0;
 }
 
 gxMesh *gxGraphics::verifyMesh( gxMesh *m ){

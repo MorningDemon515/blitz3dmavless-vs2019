@@ -57,42 +57,49 @@ void PixelFormat::setFormat( const DDPIXELFORMAT &pf ){
 	asm_coder.CodePoint( point_code,depth,amask,rmask,gmask,bmask );
 }
 
-static void adjustTexSize( int *width,int *height,IDirect3DDevice7 *dir3dDev ){
-    D3DDEVICEDESC7 ddDesc={0};
-	if( dir3dDev->GetCaps( &ddDesc )<0 ){
-		*width=*height=256;
+static void adjustTexSize( int *width,int *height,IDirect3DDevice9 *dir3dDev ){
+	gxGraphics *gx_graphics;
+	D3DCAPS9* caps ;
+	D3DCAPS9 caps1;
+
+	if (dir3dDev->GetDeviceCaps(D3DADAPTER_DEFAULT) < 0)
+	{
+		*width = *height = 256;
 		return;
 	}
-	int w=*width,h=*height,min,max;
+	int w = *width, h = *height, min, max;
 	//make power of 2
 	//Try *always* making POW2 size to fix GF6800 non-pow2 tex issue
 //    if( ddDesc.dpcTriCaps.dwTextureCaps & D3DPTEXTURECAPS_POW2 ){
-		for( w=1;w<*width;w<<=1 ){}
-		for( h=1;h<*height;h<<=1 ){}
-//	}
-	//make square
-    if( ddDesc.dpcTriCaps.dwTextureCaps & D3DPTEXTURECAPS_SQUAREONLY ){
-		if( w>h ) h=w;
-		else w=h;
+	for (w = 1; w < *width; w <<= 1) {}
+	for (h = 1; h < *height; h <<= 1) {}
+	//	}
+		//make square
+	if (caps->TextureCaps & D3DPTEXTURECAPS_SQUAREONLY)
+	{
+		if (w > h) h = w;
+		else w = h;
 	}
 	//check aspect ratio
-	if( max=ddDesc.dwMaxTextureAspectRatio ){
-		int asp=w>h ? w/h : h/w;
-		if( asp>max ){
-			if( w>h ) h=w/max;
-			else w=h/max;
+	if (max = caps ->MaxTextureAspectRatio)
+	{
+		int asp = w > h ? w / h : h / w;
+		if (asp > max)
+		{
+			if (w > h) h = w / max;
+			else w = h / max;
 		}
 	}
 	//clamp size
-	if( (min=ddDesc.dwMinTextureWidth) && w<min ) w=min;
-	if( (min=ddDesc.dwMinTextureHeight) && h<min ) h=min;
-	if( (max=ddDesc.dwMaxTextureWidth) && w>max ) w=max;
-	if( (max=ddDesc.dwMaxTextureHeight) && h>max ) h=max;
+	/*if((min = ddDesc.dwMinTextureWidth) && w < min) w = min;
+	if((min = ddDesc.dwMinTextureHeight) && h < min) h = min;   WTF WAS MARK SIBLY ON???*/
+	if ((max = caps ->MaxTextureWidth) && w > max) w = max;
+	if ((max = caps ->MaxTextureHeight) && h > max) h = max;
 
-	*width=w;*height=h;
+	*width = w; *height = h;
 }
 
-static ddSurf *createSurface( int width,int height,int pitch,void *bits,IDirectDraw7 *dirDraw ){
+static ddSurf *createSurface( int width,int height,int pitch,void *bits,IDirectDraw *dirDraw ){
 	DDSURFACEDESC2 desc={sizeof(desc)};
 	desc.dwFlags=DDSD_WIDTH|DDSD_HEIGHT|DDSD_LPSURFACE|DDSD_PITCH|DDSD_PIXELFORMAT|DDSD_CAPS;
 	desc.ddsCaps.dwCaps=DDSCAPS_OFFSCREENPLAIN|DDSCAPS_SYSTEMMEMORY;
@@ -106,13 +113,13 @@ static ddSurf *createSurface( int width,int height,int pitch,void *bits,IDirectD
 	desc.ddpfPixelFormat.dwBBitMask=0x0000ff;
 	desc.ddpfPixelFormat.dwRGBAlphaBitMask=0xff000000;
 	ddSurf *surf;
-	if( dirDraw->CreateSurface( &desc,&surf,0 )>=0 ) return surf;
+	if( dirDraw->CreateSurface(reinterpret_cast<LPDDSURFACEDESC>(&desc), reinterpret_cast<LPDIRECTDRAWSURFACE*>(&surf),0 )>=0 ) return surf;
 	return 0;
 }
 
 static void buildMask( ddSurf *surf ){
 	DDSURFACEDESC2 desc={sizeof(desc)};
-	surf->Lock( 0,&desc,DDLOCK_WAIT,0 );
+	surf->Lock( 0, reinterpret_cast<LPDDSURFACEDESC>(&desc),DDLOCK_WAIT,0 );
 	unsigned char *surf_p=(unsigned char*)desc.lpSurface;
 	PixelFormat fmt( desc.ddpfPixelFormat );
 
@@ -133,7 +140,7 @@ static void buildMask( ddSurf *surf ){
 static void buildAlpha( ddSurf *surf,bool whiten ){
 
 	DDSURFACEDESC2 desc={sizeof(desc)};
-	surf->Lock( 0,&desc,DDLOCK_WAIT,0 );
+	surf->Lock( 0, reinterpret_cast<LPDDSURFACEDESC>(&desc),DDLOCK_WAIT,0 );
 	unsigned char *surf_p=(unsigned char*)desc.lpSurface;
 	PixelFormat fmt( desc.ddpfPixelFormat );
 
@@ -155,7 +162,7 @@ static void buildAlpha( ddSurf *surf,bool whiten ){
 void ddUtil::buildMipMaps( ddSurf *surf ){
 
 	DDSURFACEDESC2 desc={sizeof(desc)};
-	surf->GetSurfaceDesc( &desc );
+	surf->GetSurfaceDesc(reinterpret_cast<LPDDSURFACEDESC>(&desc) );
 	if( !(desc.ddsCaps.dwCaps & DDSCAPS_TEXTURE) ) return;
 	if( !(desc.ddpfPixelFormat.dwFlags & DDPF_RGB) ) return;
 
@@ -163,17 +170,17 @@ void ddUtil::buildMipMaps( ddSurf *surf ){
 	caps.dwCaps=DDSCAPS_TEXTURE;
 	caps.dwCaps2=DDSCAPS2_MIPMAPSUBLEVEL;
 
-	IDirectDrawSurface7 *src=surf,*dest;
+	IDirectDrawSurface *src=surf,*dest;
 
-	while( src->GetAttachedSurface( &caps,&dest )>=0 ){
+	while( src->GetAttachedSurface(reinterpret_cast<LPDDSCAPS>(&caps),&dest )>=0 ){
 
 		DDSURFACEDESC2 src_desc={sizeof(src_desc)};
-		if( src->Lock( 0,&src_desc,DDLOCK_WAIT,0 )<0 ) abort();
+		if( src->Lock( 0, reinterpret_cast<LPDDSURFACEDESC>(&src_desc),DDLOCK_WAIT,0 )<0 ) abort();
 		unsigned char *src_p=(unsigned char*)src_desc.lpSurface;
 		PixelFormat src_fmt( src_desc.ddpfPixelFormat );
 
 		DDSURFACEDESC2 dest_desc={sizeof(dest_desc)};
-		if( dest->Lock( 0,&dest_desc,DDLOCK_WAIT,0 )<0 ) abort();
+		if( dest->Lock( 0, reinterpret_cast<LPDDSURFACEDESC>(&dest_desc),DDLOCK_WAIT,0 )<0 ) abort();
 		unsigned char *dest_p=(unsigned char *)dest_desc.lpSurface;
 		PixelFormat dest_fmt( dest_desc.ddpfPixelFormat );
 
@@ -237,13 +244,13 @@ void ddUtil::buildMipMaps( ddSurf *surf ){
 void ddUtil::copy( ddSurf *dest,int dx,int dy,int dw,int dh,ddSurf *src,int sx,int sy,int sw,int sh ){
 
 	DDSURFACEDESC2 src_desc={sizeof(src_desc)};
-	src->Lock( 0,&src_desc,DDLOCK_WAIT,0 );
+	src->Lock( 0, reinterpret_cast<LPDDSURFACEDESC>(&src_desc),DDLOCK_WAIT,0 );
 	PixelFormat src_fmt( src_desc.ddpfPixelFormat );
 	unsigned char *src_p=(unsigned char*)src_desc.lpSurface;
 	src_p+=src_desc.lPitch*sy+src_fmt.getPitch()*sx;
 
 	DDSURFACEDESC2 dest_desc={sizeof(dest_desc)};
-	dest->Lock( 0,&dest_desc,DDLOCK_WAIT,0 );
+	dest->Lock( 0, reinterpret_cast<LPDDSURFACEDESC>(&dest_desc),DDLOCK_WAIT,0 );
 	PixelFormat dest_fmt( dest_desc.ddpfPixelFormat );
 	unsigned char *dest_p=(unsigned char *)dest_desc.lpSurface;
 	dest_p+=dest_desc.lPitch*dy+dest_fmt.getPitch()*dx;
@@ -316,12 +323,12 @@ ddSurf *ddUtil::createSurface( int w,int h,int flags,gxGraphics *gfx ){
 		}
 	}
 	ddSurf *surf;
-	if( gfx->dirDraw->CreateSurface( &desc,&surf,0 )>=0 ) return surf;
+	if( gfx->dirDraw->CreateSurface(reinterpret_cast<LPDDSURFACEDESC>(&desc), reinterpret_cast<LPDIRECTDRAWSURFACE*>(&surf),0 )>=0 ) return surf;
 	if( desc.ddsCaps.dwCaps & DDSCAPS_OFFSCREENPLAIN ){
 		if( !(desc.ddsCaps.dwCaps & DDSCAPS_SYSTEMMEMORY) ){
 			//try again in system memory!
 			desc.ddsCaps.dwCaps|=DDSCAPS_SYSTEMMEMORY;
-			if( gfx->dirDraw->CreateSurface( &desc,&surf,0 )>=0 ) return surf;
+			if( gfx->dirDraw->CreateSurface(reinterpret_cast<LPDDSURFACEDESC>(&desc), reinterpret_cast<LPDIRECTDRAWSURFACE*>(&surf),0 )>=0 ) return surf;
 		}
 	}
 	return 0;
@@ -329,7 +336,7 @@ ddSurf *ddUtil::createSurface( int w,int h,int flags,gxGraphics *gfx ){
 
 //Tom Speed's DXTC loader
 //
-IDirectDrawSurface7 *loadDXTC(const char* filename,gxGraphics *gfx)
+IDirectDrawSurface *loadDXTC(const char* filename,gxGraphics *gfx)
 {
 	HRESULT hr;
 	DDSURFACEDESC2 ddsd;
@@ -388,8 +395,8 @@ IDirectDrawSurface7 *loadDXTC(const char* filename,gxGraphics *gfx)
 
 	/* Create the new DXTC surface using the DDSURFACEDESC2
 	we read in from the file */
-	IDirectDrawSurface7 * newSurf = NULL;
-	hr = gfx->dirDraw->CreateSurface(&ddsd, &newSurf, NULL);
+	IDirectDrawSurface * newSurf = NULL;
+	hr = gfx->dirDraw->CreateSurface(reinterpret_cast<LPDDSURFACEDESC>(&ddsd), reinterpret_cast<LPDIRECTDRAWSURFACE*>(&newSurf), NULL);
 	if(FAILED(hr))
 	{
 		fclose(fp);
@@ -403,8 +410,8 @@ IDirectDrawSurface7 *loadDXTC(const char* filename,gxGraphics *gfx)
 	mipmapddsd.dwCaps = DDSCAPS_TEXTURE|DDSCAPS_MIPMAP|DDSCAPS_COMPLEX;
 
 	/* pointers used when iterating through mipmaps */
-	IDirectDrawSurface7 *topDDS = NULL;
-	IDirectDrawSurface7 *nextDDS = NULL;
+	IDirectDrawSurface *topDDS = NULL;
+	IDirectDrawSurface *nextDDS = NULL;
 
 	topDDS = newSurf;
 	topDDS->AddRef();
@@ -412,7 +419,7 @@ IDirectDrawSurface7 *loadDXTC(const char* filename,gxGraphics *gfx)
 	while(TRUE)
 	{
 		/* get a description of this surface */
-		hr = topDDS->Lock(NULL,&ddsd,DDLOCK_WAIT,NULL);
+		hr = topDDS->Lock(NULL, reinterpret_cast<LPDDSURFACEDESC>(&ddsd),DDLOCK_WAIT,NULL);
 		if(FAILED(hr))
 		{
 			fclose(fp);
@@ -438,7 +445,7 @@ IDirectDrawSurface7 *loadDXTC(const char* filename,gxGraphics *gfx)
 
 
 		/* Get next mipmap in chain, or exit the loop if there's no more */
-		hr = topDDS->GetAttachedSurface(&mipmapddsd,&nextDDS);
+		hr = topDDS->GetAttachedSurface(reinterpret_cast<LPDDSCAPS>(&mipmapddsd),&nextDDS);
 		if(FAILED(hr))
 		{
 			fclose(fp);

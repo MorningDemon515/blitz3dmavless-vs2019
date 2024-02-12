@@ -4,7 +4,11 @@
 
 #include <set>
 #include <string>
-#include <d3d.h>
+#include <d3d9.h>
+#include <d3d9types.h>
+#include < D3dhal.h>
+#include <mswmdm.h>
+#include <d3dx9math.h>
 
 #include "ddutil.h"
 
@@ -21,19 +25,21 @@ class gxRuntime;
 
 class gxGraphics{
 public:
-	IDirectDraw7 *dirDraw;
+	IDirectDraw *dirDraw;
 	IDirectDraw *ds_dirDraw;
 
-	IDirect3D7 *dir3d;
-	IDirect3DDevice7 *dir3dDev;
-	D3DDEVICEDESC7 dir3dDevDesc;
+	IDirect3D9 *dir3d;
+	IDirect3DDevice9 *dir3dDev;
+	D3DCAPS9 dir3dDevDesc;//D3DDEVICEDESC7
 	DDPIXELFORMAT primFmt,zbuffFmt;
+
+	LPDIRECT3DDEVICE9 device1;
 
 	DDPIXELFORMAT texRGBFmt[2],texAlphaFmt[2],texRGBAlphaFmt[2],texRGBMaskFmt[2];
 
     FT_Library ftLibrary;
 
-	gxGraphics( gxRuntime *runtime,IDirectDraw7 *dirDraw,IDirectDrawSurface7 *front,IDirectDrawSurface7 *back,bool d3d );
+	gxGraphics( gxRuntime *runtime,IDirectDraw *dirDraw,IDirectDrawSurface *front,IDirectDrawSurface *back,bool d3d );
 	~gxGraphics();
 
 	void backup();

@@ -50,13 +50,13 @@ n_texs(0),tris_drawn(0){
 	setRS( D3DRENDERSTATE_DESTBLEND,D3DBLEND_INVSRCALPHA );
 
 	//suss out caps
-	can_wb=false;
+	/*can_wb = false;
 	hw_tex_stages=1;
-	D3DDEVICEDESC7 devDesc={0};
+	D3DCAPS9 devDesc={0};//D3DDEVICEDESC7
 	if( dir3dDev->GetCaps( &devDesc )>=0 ){
 		DWORD caps=devDesc.dpcTriCaps.dwRasterCaps;
 		//texture stages
-		hw_tex_stages=devDesc.wMaxSimultaneousTextures;
+		hw_tex_stages=devDesc.MaxSimultaneousTextures;
 		//depth buffer mode
 		if( (caps & D3DPRASTERCAPS_WBUFFER) && graphics->zbuffFmt.dwRGBBitCount==16 ) can_wb=true;
 		//fog mode
@@ -67,13 +67,39 @@ n_texs(0),tris_drawn(0){
 			setRS( D3DRENDERSTATE_FOGTABLEMODE,D3DFOG_NONE );
 			setRS( D3DRENDERSTATE_FOGVERTEXMODE,D3DFOG_LINEAR );
 		}
+	}*/
+	bool can_wb = false;
+	int hw_tex_stages = 1;
+	D3DCAPS9 devDesc;
+	ZeroMemory(&devDesc, sizeof(D3DCAPS9)); // 初始化为0
+
+	if (dir3dDev->GetDeviceCaps(&devDesc) == D3D_OK) {
+		DWORD caps = devDesc.RasterCaps;
+
+		// 获取设备支持的纹理阶数
+		hw_tex_stages = devDesc.MaxTextureBlendStages;
+
+		// 深度缓冲模式
+		//if ((caps & D3DPRASTERCAPS_WBUFFER) && devDesc.ZBufferBitDepth == 16) {
+		//	can_wb = true;
+		//}
+
+		// 雾气模式
+		if ((caps & D3DPRASTERCAPS_FOGVERTEX) && (caps & D3DPRASTERCAPS_WFOG)) {
+			setRS(D3DRS_FOGVERTEXMODE, D3DFOG_NONE);
+			setRS(D3DRS_FOGTABLEMODE, D3DFOG_LINEAR);
+		}
+		else {
+			setRS(D3DRS_FOGTABLEMODE, D3DFOG_NONE);
+			setRS(D3DRS_FOGVERTEXMODE, D3DFOG_LINEAR);
+		}
 	}
 	tex_stages=hw_tex_stages;
 
 	caps_level=100;
-	if( devDesc.dpcTriCaps.dwTextureCaps & D3DPTEXTURECAPS_CUBEMAP ){
-		caps_level=110;
-	}
+	//if(devDesc.dpcTriCaps.dwTextureCaps & D3DPTEXTURECAPS_CUBEMAP ){
+	//	caps_level=110;
+	//}
 
 	//default texture states
 	for( int n=0;n<hw_tex_stages;++n ){
@@ -114,7 +140,7 @@ n_texs(0),tris_drawn(0){
 	zmode=-1;setZMode( ZMODE_NORMAL );
 	memset(&projmatrix,0,sizeof(projmatrix));
 	ortho_proj=true;frustum_nr=frustum_fr=frustum_w=frustum_h=0;setPerspProj( 1,1000,1,1 );
-	memset(&viewport,0,sizeof(viewport));viewport.dvMaxZ=1;setViewport( 0,0,target->getWidth(),target->getHeight() );
+	memset(&viewport,0,sizeof(viewport));viewport.MaxZ=1;setViewport( 0,0,target->getWidth(),target->getHeight() );
 	viewmatrix=nullmatrix;setViewMatrix( 0 );
 	worldmatrix=nullmatrix;setWorldMatrix( 0 );
 
@@ -136,7 +162,7 @@ void gxScene::setTexState( int n,const TexState &state,bool tex_blend ){
 	int tc_index=state.flags & TEX_COORDS2 ? 1 : 0;
 
 	//set canvas
-	dir3dDev->SetTexture( n,state.canvas->getTexSurface() );
+	dir3dDev->SetTexture( n, reinterpret_cast<IDirect3DBaseTexture9*>(state.canvas->getTexSurface()) );
 
 	//set addressing modes
 	setTSS( n,D3DTSS_ADDRESSU,(flags & gxCanvas::CANVAS_TEX_CLAMPU) ? D3DTADDRESS_CLAMP : D3DTADDRESS_WRAP );
@@ -246,7 +272,7 @@ void gxScene::setLights(){
 		//some lights on
 		for( int n=0;n<_curLights.size();++n ){
 			gxLight *light=_curLights[n];
-			bool enable=light->d3d_light.dltType!=D3DLIGHT_DIRECTIONAL;
+			bool enable=light->d3d_light.Type!=D3DLIGHT_DIRECTIONAL;
 			dir3dDev->LightEnable( n,enable );
 		}
 	}else{
@@ -324,8 +350,8 @@ void gxScene::setAmbient2( const float rgb[] ){
 }
 
 void gxScene::setViewport( int x,int y,int w,int h ){
-	if( x==viewport.dwX && y==viewport.dwY && w==viewport.dwWidth && h==viewport.dwHeight ) return;
-	viewport.dwX=x;viewport.dwY=y;viewport.dwWidth=w;viewport.dwHeight=h;
+	if( x==viewport.X && y==viewport.Y && w==viewport.Width && h==viewport.Height ) return;
+	viewport.X=x;viewport.Y=y;viewport.Width=w;viewport.Height=h;
 	dir3dDev->SetViewport( &viewport );
 }
 
@@ -411,13 +437,13 @@ void gxScene::setWorldMatrix( const Matrix *m ){
 
 void gxScene::setRenderState( const RenderState &rs ){
 	bool setmat=false;
-	if( memcmp( rs.color,&material.diffuse.r,12 ) ){
-		memcpy( &material.diffuse.r,rs.color,12 );
-		memcpy( &material.ambient.r,rs.color,12 );
+	if( memcmp( rs.color,&material.Diffuse.r,12 ) ){
+		memcpy( &material.Diffuse.r,rs.color,12 );
+		memcpy( &material.Ambient.r,rs.color,12 );
 		setmat=true;
 	}
-	if( rs.alpha!=material.diffuse.a ){
-		material.diffuse.a=rs.alpha;
+	if( rs.alpha!=material.Diffuse.a ){
+		material.Diffuse.a=rs.alpha;
 		if( rs.fx&FX_ALPHATEST ){
 			int alpharef=(rs.fx&FX_VERTEXALPHA)?0:128*rs.alpha;
 			setRS( D3DRENDERSTATE_ALPHAREF,alpharef );
@@ -427,8 +453,8 @@ void gxScene::setRenderState( const RenderState &rs ){
 	if( rs.shininess!=shininess ){
 		shininess=rs.shininess;
 		float t=shininess>0 ? (shininess<1 ? shininess : 1) : 0;
-		material.specular.r=material.specular.g=material.specular.b=t;
-		material.power=shininess*128;
+		material.Specular.r=material.Specular.g=material.Specular.b=t;
+		material.Power=shininess*128;
 		setRS( D3DRENDERSTATE_SPECULARENABLE,shininess>0 ? true : false );
 		setmat=true;
 	}
@@ -615,7 +641,7 @@ void gxScene::render( gxMesh *m,int first_vert,int vert_cnt,int first_tri,int tr
 
 void gxScene::end(){
 	dir3dDev->EndScene();
-	RECT r={ viewport.dwX,viewport.dwY,viewport.dwX+viewport.dwWidth,viewport.dwY+viewport.dwHeight };
+	RECT r={ viewport.X,viewport.Y,viewport.X+viewport.Width,viewport.Y+viewport.Height };
 	target->damage( r );
 }
 

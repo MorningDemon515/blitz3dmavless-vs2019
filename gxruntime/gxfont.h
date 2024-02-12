@@ -11,7 +11,7 @@
 class gxCanvas;
 class gxGraphics;
 
-typedef IDirectDrawSurface7 ddSurf;
+typedef IDirectDrawSurface ddSurf;
 
 class gxFont {
     public:

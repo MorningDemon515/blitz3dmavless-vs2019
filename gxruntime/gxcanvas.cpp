@@ -76,8 +76,8 @@ static bool clip( const RECT &viewport,RECT *d,RECT *s ){
 	return true;
 }
 
-gxCanvas::gxCanvas( gxGraphics *g,IDirectDrawSurface7 *s,int f ):
-graphics(g),main_surf(s),surf(0),z_surf(0),flags(f),cube_mode(CUBEMODE_REFLECTION|CUBESPACE_WORLD),
+gxCanvas::gxCanvas(gxGraphics* graphics, ddSurf* surface, int flags):
+graphics(graphics),main_surf(surface),surf(0),z_surf(0),flags(flags),cube_mode(CUBEMODE_REFLECTION|CUBESPACE_WORLD),
 t_surf(0),cm_mask(0),locked_cnt(0),mod_cnt(0),remip_cnt(0){
 
 	if( flags & CANVAS_TEX_CUBE ){
@@ -96,7 +96,7 @@ t_surf(0),cm_mask(0),locked_cnt(0),mod_cnt(0),remip_cnt(0){
 			}
 			DDSCAPS2 caps={0};
 			caps.dwCaps2=DDSCAPS2_CUBEMAP|n;
-			main_surf->GetAttachedSurface( &caps,&cube_surfs[k] );
+			main_surf->GetAttachedSurface(reinterpret_cast<LPDDSCAPS>(&caps),&cube_surfs[k] );
 		}
 		surf=cube_surfs[1];
 	}else{
@@ -105,7 +105,7 @@ t_surf(0),cm_mask(0),locked_cnt(0),mod_cnt(0),remip_cnt(0){
 	}
 
 	DDSURFACEDESC2 desc={sizeof(desc)};
-	surf->GetSurfaceDesc( &desc );
+	surf->GetSurfaceDesc(reinterpret_cast<LPDDSURFACEDESC>( &desc) );
 	format.setFormat( desc.ddpfPixelFormat );
 
 	clip_rect.left=clip_rect.top=0;
@@ -129,7 +129,7 @@ gxCanvas::~gxCanvas(){
 	releaseZBuffer();
 	main_surf->Release();
 }
-
+/*
 void gxCanvas::backup()const{
 	if( flags & CANVAS_TEX_CUBE ) return;
 
@@ -151,6 +151,29 @@ void gxCanvas::backup()const{
 	}
 
 	if( t_surf->Blt( 0,surf,0,DDBLT_WAIT,0 )<0 ) return;
+}*/
+
+void gxCanvas::backup() const {
+	if (flags & CANVAS_TEX_CUBE) return;
+
+	if (!t_surf) {
+		DDSURFACEDESC2 desc = { sizeof(desc) };
+		if (surf->GetSurfaceDesc(reinterpret_cast<LPDDSURFACEDESC>(&desc)) < 0) return;
+		if (desc.ddsCaps.dwCaps & DDSCAPS_SYSTEMMEMORY) return;
+
+		DDSURFACEDESC2 t_desc = { sizeof(t_desc) };
+		t_desc.dwFlags = DDSD_CAPS | DDSD_PIXELFORMAT | DDSD_WIDTH | DDSD_HEIGHT;
+		t_desc.ddsCaps.dwCaps = DDSCAPS_OFFSCREENPLAIN | DDSCAPS_SYSTEMMEMORY;
+		t_desc.dwWidth = desc.dwWidth; t_desc.dwHeight = desc.dwHeight;
+		t_desc.ddpfPixelFormat = desc.ddpfPixelFormat;
+
+		if (graphics->dirDraw->CreateSurface(reinterpret_cast<LPDDSURFACEDESC>(&t_desc), reinterpret_cast<LPDIRECTDRAWSURFACE*>(&t_surf), 0) < 0) {
+			t_surf = 0;
+			return;
+		}
+	}
+
+	if (t_surf->Blt(0, surf, 0, DDBLT_WAIT, 0) < 0) return;
 }
 
 void gxCanvas::restore()const{
@@ -227,16 +250,16 @@ int gxCanvas::getModify()const{
 	return mod_cnt;
 }
 
-bool gxCanvas::attachZBuffer(){
-	if( z_surf ) return true;
-	DDSURFACEDESC2 desc={sizeof(desc)};
-	desc.dwFlags=DDSD_WIDTH|DDSD_HEIGHT|DDSD_CAPS|DDSD_PIXELFORMAT;
-	desc.dwWidth=getWidth();
-	desc.dwHeight=getHeight();
-	desc.ddsCaps.dwCaps=DDSCAPS_ZBUFFER|DDSCAPS_VIDEOMEMORY;
-	desc.ddpfPixelFormat=graphics->zbuffFmt;
-	if( graphics->dirDraw->CreateSurface( &desc,&z_surf,0 )<0 ) return false;
-	surf->AddAttachedSurface( z_surf );
+bool gxCanvas::attachZBuffer() {
+	if (z_surf) return true;
+	DDSURFACEDESC2 desc = { sizeof(desc) };
+	desc.dwFlags = DDSD_WIDTH | DDSD_HEIGHT | DDSD_CAPS | DDSD_PIXELFORMAT;
+	desc.dwWidth = getWidth();
+	desc.dwHeight = getHeight();
+	desc.ddsCaps.dwCaps = DDSCAPS_ZBUFFER | DDSCAPS_VIDEOMEMORY;
+	desc.ddpfPixelFormat = graphics->zbuffFmt;
+	if (graphics->dirDraw->CreateSurface(reinterpret_cast<LPDDSURFACEDESC>(&desc), reinterpret_cast<LPDIRECTDRAWSURFACE*>(&z_surf), 0) < 0) return false;
+	surf->AddAttachedSurface(z_surf);
 	return true;
 }
 
@@ -650,7 +673,7 @@ bool gxCanvas::rect_collide( int x1,int y1,int x2,int y2,int w2,int h2,bool soli
 bool gxCanvas::lock()const{
 	if( !locked_cnt++ ){
 		DDSURFACEDESC2 desc={sizeof(desc)};
-		if( surf->Lock( 0,&desc,DDLOCK_WAIT|DDLOCK_NOSYSLOCK,0 )<0 ){
+		if( surf->Lock( 0, reinterpret_cast<LPDDSURFACEDESC>(&desc),DDLOCK_WAIT|DDLOCK_NOSYSLOCK,0 )<0 ){
 			--locked_cnt;
 			return false;
 		}

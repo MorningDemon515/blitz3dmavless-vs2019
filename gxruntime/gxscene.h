@@ -3,7 +3,7 @@
 #define GXSCENE_H
 
 #include <map>
-#include <d3d.h>
+#include <d3d9.h>
 
 #include "gxlight.h"
 
@@ -17,7 +17,7 @@ class gxTexture;
 class gxScene{
 public:
 	gxGraphics *graphics;
-	IDirect3DDevice7 *dir3dDev;
+	IDirect3DDevice9 *dir3dDev;
 
 	gxScene( gxGraphics *graphics,gxCanvas *target );
 	~gxScene();
@@ -123,12 +123,12 @@ private:
 	unsigned ambient,ambient2,fogcolor;
 	int caps_level,fogmode,zmode;
 	float fogrange_nr,fogrange_fr;
-	D3DVIEWPORT7 viewport;
+	D3DVIEWPORT9 viewport;
 	bool ortho_proj;
 	float frustum_nr,frustum_fr,frustum_w,frustum_h;
 	D3DMATRIX projmatrix,viewmatrix,worldmatrix;
 	D3DMATRIX inv_viewmatrix;
-	D3DMATERIAL7 material;
+	D3DMATERIAL9 material;
 	float shininess;
 	int blend,fx;
 	struct TexState{
